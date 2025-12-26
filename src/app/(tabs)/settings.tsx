@@ -3,14 +3,14 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from "react-native"
 import { useRouter } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
-import { useApp } from "../../contexts/AppContext"
-import { Avatar } from "../../components/common/Avatar"
-import { Card } from "../../components/common/Card"
-import { Toast } from "../../components/common/Toast"
-import { useToast } from "../../hooks/useToast"
-import { pickImage } from "../../utils/fileOperations"
+import { useApp } from "@/contexts/AppContext"
+import { Avatar } from "@/components/common/Avatar"
+import { Card } from "@/components/common/Card"
+import { Toast } from "@/components/common/Toast"
+import { useToast } from "@/hooks/useToast"
+import { pickImage } from "@/utils/fileOperations"
 import { useState } from "react"
-import { ConfirmModal } from "../../components/common/ConfirmModal"
+import { ConfirmModal } from "@/components/common/ConfirmModal"
 
 export default function SettingsScreen() {
   const router = useRouter()
@@ -40,10 +40,12 @@ export default function SettingsScreen() {
             setLoading(true)
             const imageUri = await pickImage(true)
             if (imageUri) {
+              console.log("[v0] Settings - Updating avatar to:", imageUri)
               updateUserProfile({ avatar: imageUri })
               success("Profile picture updated!")
             }
           } catch (error) {
+            console.log("[v0] Settings - Error updating avatar:", error)
             error("Failed to update picture")
           } finally {
             setLoading(false)
@@ -57,10 +59,12 @@ export default function SettingsScreen() {
             setLoading(true)
             const imageUri = await pickImage(false)
             if (imageUri) {
+              console.log("[v0] Settings - Updating avatar to:", imageUri)
               updateUserProfile({ avatar: imageUri })
               success("Profile picture updated!")
             }
           } catch (error) {
+            console.log("[v0] Settings - Error updating avatar:", error)
             error("Failed to update picture")
           } finally {
             setLoading(false)
@@ -72,7 +76,7 @@ export default function SettingsScreen() {
   }
 
   return (
-    <View className="flex-1 bg-dark">
+    <View className="flex-1 bg-[#0F1419]">
       <Toast visible={toast.visible} message={toast.message} type={toast.type} onHide={hide} />
 
       <ConfirmModal
@@ -90,12 +94,12 @@ export default function SettingsScreen() {
         <Card className="flex-row justify-between items-center p-5 mb-8">
           <View className="flex-row items-center gap-4">
             <View className="relative">
-              <Avatar uri={userProfile.avatar} name={userProfile.name} size={64} />
-              <View className="absolute bottom-0.5 right-0.5 w-4 h-4 rounded-full bg-success border-2 border-dark-card" />
+              <Avatar key={userProfile.avatar} uri={userProfile.avatar} name={userProfile.name} size={64} />
+              <View className="absolute bottom-0.5 right-0.5 w-4 h-4 bg-[#10b981] rounded-full border-2 border-[#192b33]" />
             </View>
             <View>
               <Text className="text-xl font-bold text-white">{userProfile.name}</Text>
-              <Text className="text-sm text-gray-400" numberOfLines={1}>
+              <Text className="text-sm text-[#94a3b8]" numberOfLines={1}>
                 {userProfile.title}
               </Text>
             </View>
@@ -106,14 +110,14 @@ export default function SettingsScreen() {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator size="small" color="#0EA5E9" />
+              <ActivityIndicator size="small" color="#13a4ec" />
             ) : (
-              <Ionicons name="pencil" size={18} color="#0EA5E9" />
+              <Ionicons name="pencil" size={18} color="#13a4ec" />
             )}
           </TouchableOpacity>
         </Card>
 
-        <Text className="text-xs font-bold text-gray-500 tracking-wider mb-3">ACCOUNT & PREFERENCES</Text>
+        <Text className="text-xs font-bold text-[#64748b] tracking-wider mb-3">ACCOUNT & PREFERENCES</Text>
         <Card className="mb-8 overflow-hidden">
           <SettingItem
             icon="person"
@@ -121,14 +125,14 @@ export default function SettingsScreen() {
             title="Edit Profile"
             onPress={() => router.push("/edit-profile")}
           />
-          <View className="h-px bg-dark" />
+          <View className="h-px bg-[#0F1419]" />
           <SettingItem icon="notifications" iconBg="#0EA5E9" title="Notification Settings" onPress={() => {}} />
         </Card>
 
-        <Text className="text-xs font-bold text-gray-500 tracking-wider mb-3">SUPPORT & INFO</Text>
+        <Text className="text-xs font-bold text-[#64748b] tracking-wider mb-3">SUPPORT & INFO</Text>
         <Card className="overflow-hidden">
           <SettingItem icon="help-circle" iconBg="#0EA5E9" title="Help & Support" onPress={() => {}} />
-          <View className="h-px bg-dark" />
+          <View className="h-px bg-[#0F1419]" />
           <SettingItem
             icon="information-circle"
             iconBg="#8B5CF6"
@@ -139,14 +143,14 @@ export default function SettingsScreen() {
         </Card>
 
         <TouchableOpacity
-          className="flex-row items-center justify-center gap-2 bg-dark-card py-4 rounded-xl my-6"
+          className="flex-row items-center justify-center gap-2 bg-[#192b33] py-4 rounded-xl my-6"
           onPress={() => setShowLogoutModal(true)}
         >
           <Ionicons name="log-out-outline" size={20} color="#EF4444" />
-          <Text className="text-base font-bold text-error">Log Out</Text>
+          <Text className="text-base font-bold text-[#ef4444]">Log Out</Text>
         </TouchableOpacity>
 
-        <Text className="text-center text-xs text-gray-500 mb-8">MarkMe Inc. © 2023</Text>
+        <Text className="text-center text-xs text-[#64748b] mb-8">MarkMe Inc. © 2025</Text>
       </ScrollView>
     </View>
   )
@@ -174,8 +178,8 @@ function SettingItem({
         <Text className="text-base font-semibold text-white">{title}</Text>
       </View>
       <View className="flex-row items-center gap-2">
-        {badge && <Text className="text-sm text-gray-500">{badge}</Text>}
-        <Ionicons name="chevron-forward" size={20} color="#64748B" />
+        {badge && <Text className="text-sm text-[#64748b]">{badge}</Text>}
+        <Ionicons name="chevron-forward" size={20} color="#64748b" />
       </View>
     </TouchableOpacity>
   )

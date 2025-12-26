@@ -1,19 +1,19 @@
-"use client"
+// "use client"
 
 import { useState } from "react"
 import { View, Text, ScrollView, TouchableOpacity } from "react-native"
 import { useRouter, useLocalSearchParams } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
-import { useApp } from "../../contexts/AppContext"
-import { Header } from "../../components/common/Header"
-import { Button } from "../../components/common/Button"
-import { Card } from "../../components/common/Card"
-import { Avatar } from "../../components/common/Avatar"
-import { ManageCriteriaModal } from "../../components/modals/ManageCriteriaModal"
-import { GradeInputModal } from "../../components/modals/GradeInputModal"
-import { useToast } from "../../hooks/useToast"
+import { useApp } from "@/contexts/AppContext"
+import { Header } from "@/components/common/Header"
+import { Button } from "@/components/common/Button"
+import { Card } from "@/components/common/Card"
+import { Avatar } from "@/components/common/Avatar"
+import { ManageCriteriaModal } from "@/components/modals/ManageCriteriaModal"
+import { GradeInputModal } from "@/components/modals/GradeInputModal"
+import { useToast } from "@/hooks/useToast"
 import { calculateOverallGrade, getLetterGrade, getGradeColor } from "@/utils/gradeCalculations"
-import type { GradingCriterion, Student } from "../../interfaces/interface"
+import type { GradingCriterion, Student } from "@/interfaces/interface"
 
 export default function GradeStudentsScreen() {
   const router = useRouter()
@@ -31,15 +31,16 @@ export default function GradeStudentsScreen() {
 
   if (!classItem) return null
 
-  const criteria: GradingCriterion[] = Array.isArray(classItem.gradingCriteria) && 
-    classItem.gradingCriteria.length > 0 && 
-    typeof classItem.gradingCriteria[0] === 'object'
-    ? (classItem.gradingCriteria as unknown as GradingCriterion[])
-    : [
-        { id: "1", name: "Participation", weight: 20, maxScore: 100 },
-        { id: "2", name: "Technical Skills", weight: 40, maxScore: 100 },
-        { id: "3", name: "Communication", weight: 40, maxScore: 100 },
-      ]
+  const criteria: GradingCriterion[] =
+    Array.isArray(classItem.gradingCriteria) &&
+    classItem.gradingCriteria.length > 0 &&
+    typeof classItem.gradingCriteria[0] === "object"
+      ? (classItem.gradingCriteria as unknown as GradingCriterion[])
+      : [
+          { id: "1", name: "Participation", weight: 20, maxScore: 100 },
+          { id: "2", name: "Technical Skills", weight: 40, maxScore: 100 },
+          { id: "3", name: "Communication", weight: 40, maxScore: 100 },
+        ]
 
   const handleGradePress = (student: Student, criterion: GradingCriterion) => {
     setSelectedStudent(student)
@@ -80,17 +81,17 @@ export default function GradeStudentsScreen() {
   ).length
 
   return (
-    <View className="flex-1 bg-dark">
+    <View className="flex-1 bg-[#0F1419]">
       <Header
         title="Grade Students"
         subtitle={`${classItem.name} - ${classItem.section}`}
-        rightElement={<Text className="text-base font-semibold text-primary">Help</Text>}
+        rightElement={<Text className="text-base font-semibold text-[#13a4ec]">Help</Text>}
       />
 
       <View className="flex-row justify-between items-center px-5 mb-4">
-        <Text className="text-xs font-bold text-gray-500 tracking-wider">GRADING CRITERIA</Text>
+        <Text className="text-xs font-bold text-[#6b7280] tracking-wider">GRADING CRITERIA</Text>
         <TouchableOpacity onPress={() => setShowCriteriaModal(true)}>
-          <Text className="text-xs font-semibold text-primary">Manage Criteria →</Text>
+          <Text className="text-xs font-semibold text-[#13a4ec]">Manage Criteria →</Text>
         </TouchableOpacity>
       </View>
 
@@ -100,8 +101,8 @@ export default function GradeStudentsScreen() {
           <View className="flex-row gap-2">
             {criteria.map((criterion) => (
               <Card key={criterion.id} className="px-4 py-3 min-w-35">
-                <Text className="text-sm font-bold text-white mb-1">{criterion.name}</Text>
-                <Text className="text-xs text-gray-400">
+                <Text className="text-sm font-bold text-[#ffffff] mb-1">{criterion.name}</Text>
+                <Text className="text-xs text-[#94a3b8]">
                   Weight: {criterion.weight}% • Max: {criterion.maxScore}
                 </Text>
               </Card>
@@ -124,8 +125,8 @@ export default function GradeStudentsScreen() {
                   <View className="flex-row items-center gap-3 flex-1">
                     <Avatar uri={student.avatar} name={student.name} />
                     <View className="flex-1">
-                      <Text className="text-base font-bold text-white">{student.name}</Text>
-                      <Text className="text-xs text-gray-500">
+                      <Text className="text-base font-bold text-[#ffffff]">{student.name}</Text>
+                      <Text className="text-xs text-[#6b7280]">
                         ID: {student.id} • {student.status === "present" ? "Present" : "Absent"}
                       </Text>
                     </View>
@@ -135,7 +136,7 @@ export default function GradeStudentsScreen() {
                       <Text className="text-2xl font-bold" style={{ color: gradeColor }}>
                         {overallGrade.toFixed(0)}%
                       </Text>
-                      <Text className="text-xs text-gray-400">{letterGrade}</Text>
+                      <Text className="text-xs text-[#94a3b8]">{letterGrade}</Text>
                     </View>
                   )}
                 </View>
@@ -147,24 +148,24 @@ export default function GradeStudentsScreen() {
                     <TouchableOpacity
                       key={criterion.id}
                       onPress={() => handleGradePress(student, criterion)}
-                      className="flex-row justify-between items-center py-3 border-t border-dark-border"
+                      className="flex-row justify-between items-center py-3 border-t border-[#325567]"
                     >
                       <View>
-                        <Text className="text-sm font-semibold text-white">{criterion.name}</Text>
-                        <Text className="text-xs text-gray-400">
+                        <Text className="text-sm font-semibold text-[#ffffff]">{criterion.name}</Text>
+                        <Text className="text-xs text-[#94a3b8]">
                           {criterion.weight}% • Max {criterion.maxScore}
                         </Text>
                       </View>
                       <View className="flex-row items-center gap-2">
                         {currentScore !== undefined ? (
                           <>
-                            <Text className="text-lg font-bold text-white">{currentScore}</Text>
-                            <Text className="text-sm text-gray-400">/ {criterion.maxScore}</Text>
+                            <Text className="text-lg font-bold text-[#ffffff]">{currentScore}</Text>
+                            <Text className="text-sm text-[#94a3b8]">/ {criterion.maxScore}</Text>
                             <Ionicons name="checkmark-circle" size={20} color="#10b981" />
                           </>
                         ) : (
                           <>
-                            <Text className="text-sm text-gray-500">Tap to grade</Text>
+                            <Text className="text-sm text-[#6b7280]">Tap to grade</Text>
                             <Ionicons name="chevron-forward" size={20} color="#64748b" />
                           </>
                         )}
@@ -177,17 +178,17 @@ export default function GradeStudentsScreen() {
           })}
 
           <View className="flex-row justify-between items-center my-6">
-            <Text className="text-sm text-gray-400">
+            <Text className="text-sm text-[#94a3b8]">
               {gradedCount}/{classItem.students.length} Students Fully Graded
             </Text>
             <TouchableOpacity onPress={() => setStudentGrades({})}>
-              <Text className="text-sm font-semibold text-error">Clear All</Text>
+              <Text className="text-sm font-semibold text-[#EF4444]">Clear All</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
 
-      <View className="px-5 pb-8 border-t border-dark-border pt-4">
+      <View className="px-5 pb-8 border-t border-[#325567] pt-4">
         <Button
           title="Save All Grades"
           onPress={() => {

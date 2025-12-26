@@ -33,17 +33,17 @@ export default function LoginScreen() {
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log("[v0] Login form submitted:", data.email)
+    console.log("Login form submitted:", data.email)
     try {
       const result = await logIn(data)
-      console.log("[v0] Login successful:", result)
+      console.log("Login successful:", result)
       setIsAuthenticated(true)
       show("Welcome back!", "success")
       setTimeout(() => {
         router.push("/(tabs)/classes")
       }, 100)
     } catch (error: any) {
-      console.log("[v0] Login error:", error.message)
+      console.log("Login error:", error.message)
       show(error.message || "Login failed", "error")
     }
   }

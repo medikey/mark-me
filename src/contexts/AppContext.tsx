@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { mockClasses } from "@/constants/data"
-import { storage } from "../utils/storage"
+import { storage } from "@/utils/storage"
 import type {
   AppContextType,
   Class,
@@ -12,7 +12,7 @@ import type {
   GradingCriterion,
   StudentGrade,
   AttendanceRecord,
-} from "../interfaces/interface"
+} from "@/interfaces/interface"
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
 
@@ -118,7 +118,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const updateUserProfile = (profile: Partial<UserProfile>) => {
-    setUserProfile((prev) => ({ ...prev, ...profile }))
+    console.log("[v0] AppContext - Updating userProfile with:", profile)
+    setUserProfile((prev) => {
+      const updated = { ...prev, ...profile }
+      console.log("[v0] AppContext - New userProfile state:", updated)
+      return updated
+    })
   }
 
   const deleteClass = (classId: string) => {
@@ -197,18 +202,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = async () => {
-    await storage.clearAll()
+    await storage.saveAuth(false)
     setIsAuthenticated(false)
-    setClasses(mockClasses)
-    setAssignments([])
-    setGrades([])
-    setUserProfile({
-      name: "Alex Johnson",
-      title: "Senior Mathematics Teacher",
-      email: "alex.johnson@school.edu",
-      phone: "+1 (555) 123-4567",
-      avatar: "https://i.pravatar.cc/100?img=5",
-    })
+    // Note: Removed storage.clearAll() to preserve user's classes, assignments, grades, and profile
   }
 
   const saveAttendanceRecord = (classId: string, date: string) => {

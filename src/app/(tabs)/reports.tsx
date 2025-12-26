@@ -2,10 +2,10 @@
 
 import { View, Text, ScrollView, TouchableOpacity } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
-import { Card } from "@/components/common/Card"
-import { useApp } from "@/contexts/AppContext"
+import { Card } from "../../components/common/Card"
+import { useApp } from "../../contexts/AppContext"
 import { useRouter } from "expo-router"
-import { calculateClassGradeStats } from "@/utils/gradeAnalytics"
+import { calculateClassGradeStats } from "../../utils/gradeAnalytics"
 import { GradeDistributionChart } from "../../components/charts/GradeDistributionChart"
 import { useState } from "react"
 
@@ -79,27 +79,31 @@ export default function ReportsScreen() {
     .slice(0, 5)
 
   return (
-    <View className="flex-1 bg-dark">
+    <View className="flex-1 bg-[#101c22]">
       <ScrollView className="flex-1 p-5" showsVerticalScrollIndicator={false}>
         <Text className="text-3xl font-bold text-white mb-2">Analytics & Reports</Text>
-        <Text className="text-base text-gray-400 mb-6">View performance metrics and insights</Text>
+        <Text className="text-base text-[#8b9faa] mb-6">View performance metrics and insights</Text>
 
-        <View className="flex-row bg-gray-800 rounded-xl p-1 mb-5">
+        <View className="flex-row bg-[#192b33] rounded-xl p-1 mb-5">
           <TouchableOpacity
             onPress={() => setActiveTab("attendance")}
-            className={`flex-1 py-3 rounded-lg ${activeTab === "attendance" ? "bg-accent" : ""}`}
+            className={`flex-1 py-3 rounded-lg ${activeTab === "attendance" ? "bg-[#13a4ec]" : ""}`}
             activeOpacity={0.7}
           >
-            <Text className={`text-center font-semibold ${activeTab === "attendance" ? "text-dark" : "text-gray-400"}`}>
+            <Text
+              className={`text-center font-semibold ${activeTab === "attendance" ? "text-[#101c22]" : "text-[#8b9faa]"}`}
+            >
               Attendance
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setActiveTab("grades")}
-            className={`flex-1 py-3 rounded-lg ${activeTab === "grades" ? "bg-accent" : ""}`}
+            className={`flex-1 py-3 rounded-lg ${activeTab === "grades" ? "bg-[#13a4ec]" : ""}`}
             activeOpacity={0.7}
           >
-            <Text className={`text-center font-semibold ${activeTab === "grades" ? "text-dark" : "text-gray-400"}`}>
+            <Text
+              className={`text-center font-semibold ${activeTab === "grades" ? "text-[#101c22]" : "text-[#8b9faa]"}`}
+            >
               Grades
             </Text>
           </TouchableOpacity>
@@ -109,24 +113,24 @@ export default function ReportsScreen() {
           <>
             <Card className="mb-4">
               <View className="flex-row items-center gap-3 mb-4">
-                <Ionicons name="bar-chart" size={24} color="#0EA5E9" />
+                <Ionicons name="bar-chart" size={24} color="#13a4ec" />
                 <Text className="text-lg font-bold text-white">Overall Attendance</Text>
               </View>
               <View className="gap-3">
                 <View className="flex-row justify-between items-center py-2">
-                  <Text className="text-sm text-gray-400">Average Attendance</Text>
+                  <Text className="text-sm text-[#8b9faa]">Average Attendance</Text>
                   <Text className="text-lg font-bold text-white">{averageAttendanceRate.toFixed(1)}%</Text>
                 </View>
                 <View className="flex-row justify-between items-center py-2">
-                  <Text className="text-sm text-gray-400">Total Students</Text>
+                  <Text className="text-sm text-[#8b9faa]">Total Students</Text>
                   <Text className="text-lg font-bold text-white">{overallStats.totalStudents}</Text>
                 </View>
                 <View className="flex-row justify-between items-center py-2">
-                  <Text className="text-sm text-gray-400">Total Classes</Text>
+                  <Text className="text-sm text-[#8b9faa]">Total Classes</Text>
                   <Text className="text-lg font-bold text-white">{overallStats.classCount}</Text>
                 </View>
                 <View className="flex-row justify-between items-center py-2">
-                  <Text className="text-sm text-gray-400">Total Sessions</Text>
+                  <Text className="text-sm text-[#8b9faa]">Total Sessions</Text>
                   <Text className="text-lg font-bold text-white">{overallStats.totalSessions}</Text>
                 </View>
               </View>
@@ -146,26 +150,26 @@ export default function ReportsScreen() {
                       key={classItem.id}
                       onPress={() => router.push(`/attendance-history/${classItem.id}`)}
                       activeOpacity={0.7}
-                      className="flex-row justify-between items-center py-3 border-b border-gray-800"
+                      className="flex-row justify-between items-center py-3 border-b border-[#325567]"
                     >
                       <View className="flex-row items-center gap-3">
-                        <View className="w-8 h-8 bg-accent/20 rounded-full items-center justify-center">
-                          <Text className="text-accent font-bold">{index + 1}</Text>
+                        <View className="w-8 h-8 bg-[#13a4ec]/20 rounded-full items-center justify-center">
+                          <Text className="text-[#13a4ec] font-bold">{index + 1}</Text>
                         </View>
                         <View>
                           <Text className="text-white font-semibold">{classItem.name}</Text>
-                          <Text className="text-gray-400 text-xs">{classItem.section}</Text>
+                          <Text className="text-[#8b9faa] text-xs">{classItem.section}</Text>
                         </View>
                       </View>
                       <View className="items-end">
-                        <Text className="text-accent font-bold text-lg">{classItem.attendanceRate.toFixed(1)}%</Text>
-                        <Text className="text-gray-400 text-xs">{classItem.sessions} sessions</Text>
+                        <Text className="text-[#13a4ec] font-bold text-lg">{classItem.attendanceRate.toFixed(1)}%</Text>
+                        <Text className="text-[#8b9faa] text-xs">{classItem.sessions} sessions</Text>
                       </View>
                     </TouchableOpacity>
                   ))}
                 </View>
               ) : (
-                <Text className="text-sm text-gray-400">No attendance data yet. Start taking attendance!</Text>
+                <Text className="text-sm text-[#8b9faa]">No attendance data yet. Start taking attendance!</Text>
               )}
             </Card>
           </>
@@ -178,19 +182,19 @@ export default function ReportsScreen() {
               </View>
               <View className="gap-3">
                 <View className="flex-row justify-between items-center py-2">
-                  <Text className="text-sm text-gray-400">Average Grade</Text>
+                  <Text className="text-sm text-[#8b9faa]">Average Grade</Text>
                   <Text className="text-lg font-bold text-white">{overallAverage.toFixed(1)}%</Text>
                 </View>
                 <View className="flex-row justify-between items-center py-2">
-                  <Text className="text-sm text-gray-400">Graded Students</Text>
+                  <Text className="text-sm text-[#8b9faa]">Graded Students</Text>
                   <Text className="text-lg font-bold text-white">{overallGradeStats.totalGradedStudents}</Text>
                 </View>
                 <View className="flex-row justify-between items-center py-2">
-                  <Text className="text-sm text-gray-400">Total Assignments</Text>
+                  <Text className="text-sm text-[#8b9faa]">Total Assignments</Text>
                   <Text className="text-lg font-bold text-white">{overallGradeStats.totalAssignments}</Text>
                 </View>
                 <View className="flex-row justify-between items-center py-2">
-                  <Text className="text-sm text-gray-400">Classes with Grades</Text>
+                  <Text className="text-sm text-[#8b9faa]">Classes with Grades</Text>
                   <Text className="text-lg font-bold text-white">{overallGradeStats.classCount}</Text>
                 </View>
               </View>
@@ -204,7 +208,7 @@ export default function ReportsScreen() {
               {overallGradeStats.totalGradedStudents > 0 ? (
                 <GradeDistributionChart distribution={overallGradeStats.gradeDistribution} />
               ) : (
-                <Text className="text-sm text-gray-400">No grade data yet. Start grading students!</Text>
+                <Text className="text-sm text-[#8b9faa]">No grade data yet. Start grading students!</Text>
               )}
             </Card>
 
@@ -220,26 +224,26 @@ export default function ReportsScreen() {
                       key={classItem.id}
                       onPress={() => router.push(`/grade-students/${classItem.id}`)}
                       activeOpacity={0.7}
-                      className="flex-row justify-between items-center py-3 border-b border-gray-800"
+                      className="flex-row justify-between items-center py-3 border-b border-[#325567]"
                     >
                       <View className="flex-row items-center gap-3">
-                        <View className="w-8 h-8 bg-accent/20 rounded-full items-center justify-center">
-                          <Text className="text-accent font-bold">{index + 1}</Text>
+                        <View className="w-8 h-8 bg-[#13a4ec]/20 rounded-full items-center justify-center">
+                          <Text className="text-[#13a4ec] font-bold">{index + 1}</Text>
                         </View>
                         <View>
                           <Text className="text-white font-semibold">{classItem.name}</Text>
-                          <Text className="text-gray-400 text-xs">{classItem.section}</Text>
+                          <Text className="text-[#8b9faa] text-xs">{classItem.section}</Text>
                         </View>
                       </View>
                       <View className="items-end">
-                        <Text className="text-accent font-bold text-lg">{classItem.averageGrade.toFixed(1)}%</Text>
-                        <Text className="text-gray-400 text-xs">{classItem.totalAssignments} assignments</Text>
+                        <Text className="text-[#13a4ec] font-bold text-lg">{classItem.averageGrade.toFixed(1)}%</Text>
+                        <Text className="text-[#8b9faa] text-xs">{classItem.totalAssignments} assignments</Text>
                       </View>
                     </TouchableOpacity>
                   ))}
                 </View>
               ) : (
-                <Text className="text-sm text-gray-400">No grade data yet. Start grading students!</Text>
+                <Text className="text-sm text-[#8b9faa]">No grade data yet. Start grading students!</Text>
               )}
             </Card>
           </>
@@ -266,11 +270,11 @@ export default function ReportsScreen() {
                       )
                     }
                     activeOpacity={0.7}
-                    className="flex-row justify-between items-center py-3 border-b border-gray-800"
+                    className="flex-row justify-between items-center py-3 border-b border-[#325567]"
                   >
                     <View>
                       <Text className="text-white font-medium">{classItem.name}</Text>
-                      <Text className="text-gray-400 text-xs">{classItem.section}</Text>
+                      <Text className="text-[#8b9faa] text-xs">{classItem.section}</Text>
                     </View>
                     <View className="items-end">
                       {activeTab === "attendance" ? (
@@ -278,12 +282,12 @@ export default function ReportsScreen() {
                           <Text className="text-white font-semibold">
                             {attendanceStats.averageAttendance.toFixed(1)}%
                           </Text>
-                          <Text className="text-gray-400 text-xs">{attendanceStats.totalSessions} sessions</Text>
+                          <Text className="text-[#8b9faa] text-xs">{attendanceStats.totalSessions} sessions</Text>
                         </>
                       ) : (
                         <>
                           <Text className="text-white font-semibold">{gradeStats.averageGrade.toFixed(1)}%</Text>
-                          <Text className="text-gray-400 text-xs">{gradeStats.totalAssignments} assignments</Text>
+                          <Text className="text-[#8b9faa] text-xs">{gradeStats.totalAssignments} assignments</Text>
                         </>
                       )}
                     </View>
@@ -292,7 +296,7 @@ export default function ReportsScreen() {
               })}
             </View>
           ) : (
-            <Text className="text-sm text-gray-400">No classes yet</Text>
+            <Text className="text-sm text-[#8b9faa]">No classes yet</Text>
           )}
         </Card>
       </ScrollView>

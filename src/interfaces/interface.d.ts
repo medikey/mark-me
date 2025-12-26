@@ -54,7 +54,7 @@ export interface AppContextType {
   classes: Class[]
   assignments: Assignment[]
   grades: StudentGrade[] 
-  setClasses: (classes: Class[]) => void
+  setClasses: (classes: Class[] | ((prev: Class[]) => Class[])) => void
   updateStudentStatus: (classId: string, studentId: string, status: "present" | "absent") => void
   userProfile: UserProfile
   updateUserProfile: (profile: Partial<UserProfile>) => void
@@ -106,9 +106,11 @@ export interface HeaderProps {
   showBack?: boolean
 }
 
+
 export interface CardProps {
   children: ReactNode
   className?: string
+  onPress?: () => void
 }
 
 export interface AvatarProps {

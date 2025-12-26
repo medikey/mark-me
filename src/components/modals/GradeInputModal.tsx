@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { View, Text, Modal, TouchableOpacity, TextInput } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
-import type { GradeInputModalProps } from "../../interfaces/interface"
+import type { GradeInputModalProps } from "@/interfaces/interface"
 import { Button } from "@/components/common/Button"
 import { validateScore } from "@/utils/gradeCalculations"
 
@@ -25,7 +25,7 @@ export function GradeInputModal({ visible, student, criterion, currentScore, onS
   return (
     <Modal visible={visible} animationType="fade" transparent>
       <View className="flex-1 bg-black/80 justify-center items-center px-5">
-        <View className="bg-dark-card rounded-2xl w-full max-w-md p-6">
+        <View className="bg-[#192b33] rounded-2xl w-full max-w-md p-6">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-lg font-bold text-white">Grade Input</Text>
             <TouchableOpacity onPress={onCancel}>
@@ -35,35 +35,35 @@ export function GradeInputModal({ visible, student, criterion, currentScore, onS
 
           <View className="mb-4">
             <Text className="text-base text-white mb-1">{student.name}</Text>
-            <Text className="text-sm text-gray-400">{criterion.name}</Text>
+            <Text className="text-sm text-[#94a3b8]">{criterion.name}</Text>
           </View>
 
           <View className="mb-4">
-            <Text className="text-xs text-gray-400 mb-2">Score (Max: {criterion.maxScore} points)</Text>
+            <Text className="text-xs text-[#94a3b8] mb-2">Score (Max: {criterion.maxScore} points)</Text>
             <View className="flex-row items-center gap-3">
               <TextInput
                 value={score}
                 onChangeText={setScore}
                 keyboardType="decimal-pad"
-                className="flex-1 bg-dark border border-dark-border rounded-xl px-4 py-3 text-2xl font-bold text-white text-center"
+                className="flex-1 bg-[#0F1419] border border-[#325567] rounded-xl px-4 py-3 text-2xl font-bold text-white text-center"
                 placeholder="0"
                 placeholderTextColor="#64748b"
                 autoFocus
               />
-              <View className="bg-primary/20 px-4 py-3 rounded-xl">
-                <Text className="text-primary font-bold">{percentage}%</Text>
+              <View className="bg-[#13a4ec]/20 px-4 py-3 rounded-xl">
+                <Text className="text-[#13a4ec] font-bold">{percentage}%</Text>
               </View>
             </View>
           </View>
 
           <View className="mb-4">
-            <Text className="text-xs text-gray-400 mb-2">Comment (optional)</Text>
+            <Text className="text-xs text-[#94a3b8] mb-2">Comment (optional)</Text>
             <TextInput
               value={comment}
               onChangeText={setComment}
               placeholder="Add feedback..."
               placeholderTextColor="#64748b"
-              className="bg-dark border border-dark-border rounded-xl px-4 py-3 text-white"
+              className="bg-[#0F1419] border border-[#325567] rounded-xl px-4 py-3 text-white"
               multiline
               numberOfLines={3}
             />

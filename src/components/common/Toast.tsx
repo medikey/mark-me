@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react"
 import { Text, Animated, TouchableOpacity, Platform } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
-import type { ToastType } from "../../interfaces/interface"
+import type { ToastType } from "@/interfaces/interface"
 
 interface ToastProps {
   visible: boolean
@@ -76,13 +76,13 @@ export function Toast({ visible, message, type, onHide, duration = 3000 }: Toast
   const getColor = () => {
     switch (type) {
       case "success":
-        return "bg-success"
+        return "bg-[#10B981]"
       case "error":
-        return "bg-error"
+        return "bg-[#EF4444]"
       case "warning":
-        return "bg-warning"
+        return "bg-[#F59E0B]"
       default:
-        return "bg-primary"
+        return "bg-[#13a4ec]"
     }
   }
 

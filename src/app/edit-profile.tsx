@@ -4,14 +4,14 @@ import { useState } from "react"
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from "react-native"
 import { useRouter } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
-import { useApp } from "../contexts/AppContext"
-import { Header } from "../components/common/Header"
-import { Button } from "../components/common/Button"
-import { Avatar } from "../components/common/Avatar"
-import { Card } from "../components/common/Card"
-import { Toast } from "../components/common/Toast"
-import { useToast } from "../hooks/useToast"
-import { pickImage } from "../utils/fileOperations"
+import { useApp } from "@/contexts/AppContext"
+import { Header } from "@/components/common/Header"
+import { Button } from "@/components/common/Button"
+import { Avatar } from "@/components/common/Avatar"
+import { Card } from "@/components/common/Card"
+import { Toast } from "@/components/common/Toast"
+import { useToast } from "@/hooks/useToast"
+import { pickImage } from "@/utils/fileOperations"
 
 export default function EditProfileScreen() {
   const router = useRouter()
@@ -75,7 +75,7 @@ export default function EditProfileScreen() {
   }
 
   return (
-    <View className="flex-1 bg-dark">
+    <View className="flex-1 bg-[#0F1419]">
       <Toast visible={toast.visible} message={toast.message} type={toast.type} onHide={hide} />
 
       <Header title="Edit Profile" />
@@ -85,7 +85,7 @@ export default function EditProfileScreen() {
           <View className="relative mb-4">
             <Avatar uri={avatar} name={name} size={100} />
             <TouchableOpacity
-              className="absolute bottom-0 right-0 w-10 h-10 bg-primary rounded-full justify-center items-center border-2 border-dark-card"
+              className="absolute bottom-0 right-0 w-10 h-10 bg-[#0ea5e9] rounded-full justify-center items-center border-2 border-[#192b33]"
               onPress={showImageOptions}
               disabled={loading}
             >
@@ -96,12 +96,12 @@ export default function EditProfileScreen() {
               )}
             </TouchableOpacity>
           </View>
-          <Text className="text-sm text-gray-400">Tap camera icon to change photo</Text>
+          <Text className="text-sm text-[#94a3b8]">Tap camera icon to change photo</Text>
         </Card>
 
         <Text className="text-sm font-semibold text-white mb-2">Full Name *</Text>
         <TextInput
-          className="bg-dark-card rounded-xl border border-dark-border px-4 py-4 text-base text-white mb-4"
+          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-4"
           placeholder="Enter your full name"
           placeholderTextColor="#64748B"
           value={name}
@@ -110,7 +110,7 @@ export default function EditProfileScreen() {
 
         <Text className="text-sm font-semibold text-white mb-2">Job Title *</Text>
         <TextInput
-          className="bg-dark-card rounded-xl border border-dark-border px-4 py-4 text-base text-white mb-4"
+          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-4"
           placeholder="Enter your job title"
           placeholderTextColor="#64748B"
           value={title}
@@ -119,7 +119,7 @@ export default function EditProfileScreen() {
 
         <Text className="text-sm font-semibold text-white mb-2">Email Address *</Text>
         <TextInput
-          className="bg-dark-card rounded-xl border border-dark-border px-4 py-4 text-base text-white mb-4"
+          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-4"
           placeholder="Enter your email"
           placeholderTextColor="#64748B"
           value={email}
@@ -130,7 +130,7 @@ export default function EditProfileScreen() {
 
         <Text className="text-sm font-semibold text-white mb-2">Phone Number</Text>
         <TextInput
-          className="bg-dark-card rounded-xl border border-dark-border px-4 py-4 text-base text-white mb-6"
+          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-6"
           placeholder="Enter your phone number"
           placeholderTextColor="#64748B"
           value={phone}

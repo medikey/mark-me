@@ -1,24 +1,25 @@
 import { Stack } from "expo-router"
 import { StatusBar } from "expo-status-bar"
-import { AppProvider } from "../contexts/AppContext"
+import { AppProvider } from "@/contexts/AppContext"
 import "../global.css"
 
 export default function RootLayout() {
   return (
     <AppProvider>
-      <StatusBar style="light" />
+      <StatusBar style="light" backgroundColor="#101c22" />
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: "#0F1419",
+            backgroundColor: "#101c22",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
             fontWeight: "600",
           },
           contentStyle: {
-            backgroundColor: "#0F1419",
+            backgroundColor: "#101c22",
           },
+          headerShown: false,
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />

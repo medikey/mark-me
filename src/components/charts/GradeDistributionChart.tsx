@@ -30,11 +30,11 @@ export function GradeDistributionChart({ distribution }: GradeDistributionChartP
                 <View className="w-8 h-8 rounded items-center justify-center" style={{ backgroundColor: color }}>
                   <Text className="text-white font-bold">{grade}</Text>
                 </View>
-                <Text className="text-gray-400 text-sm">{count} students</Text>
+                <Text className="text-[#94a3b8] text-sm">{count} students</Text>
               </View>
               <Text className="text-white font-semibold">{percentage.toFixed(0)}%</Text>
             </View>
-            <View className="h-2 bg-gray-800 rounded-full overflow-hidden">
+            <View className="h-2 bg-[#1a2730] rounded-full overflow-hidden">
               <View className="h-full rounded-full" style={{ width: `${barWidth}%`, backgroundColor: color }} />
             </View>
           </View>
