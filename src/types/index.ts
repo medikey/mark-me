@@ -11,6 +11,7 @@
 // export interface Class {
 //   id: string
 //   name: string
+//   subject: string
 //   section: string
 //   time: string
 //   room: string
@@ -38,5 +39,10 @@
 //     [criteria: string]: number
 //   }
 // }
+// export interface GradingCriterion {
+//   id: string
+//   name: string
+//   maxScore: number
+// }
 
-// export type { Student, Class, AttendanceRecord, GradeRecord } from "@/interfaces/interface"
+// export type { Student, Class, AttendanceRecord, GradeRecord, GradingCriterion } from "@/interfaces/interface"

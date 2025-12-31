@@ -118,10 +118,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const updateUserProfile = (profile: Partial<UserProfile>) => {
-    console.log("[v0] AppContext - Updating userProfile with:", profile)
     setUserProfile((prev) => {
       const updated = { ...prev, ...profile }
-      console.log("[v0] AppContext - New userProfile state:", updated)
       return updated
     })
   }
@@ -331,3 +329,4 @@ export function useApp() {
   }
   return context
 }
+

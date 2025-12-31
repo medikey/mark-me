@@ -10,6 +10,7 @@ import { EditClassModal } from "@/components/modals/EditClassModal"
 import { Toast } from "@/components/common/Toast"
 import { useToast } from "@/hooks/useToast"
 import type { Class } from "@/interfaces/interface"
+import { Avatar } from "@/components/common/Avatar"
 
 export default function ClassesScreen() {
   const router = useRouter()
@@ -71,7 +72,7 @@ export default function ClassesScreen() {
 
       <View className="flex-row justify-between items-center px-5 pt-15 pb-5">
         <View className="flex-row items-center gap-3">
-          <Image key={userProfile.avatar} source={{ uri: userProfile.avatar }} className="w-10 h-10 rounded-full" />
+          <Avatar key={userProfile.avatar} uri={userProfile.avatar} name={userProfile.name} size={64} />
           <Text className="text-2xl font-bold text-white">My Classes</Text>
         </View>
         <TouchableOpacity>
@@ -88,63 +89,94 @@ export default function ClassesScreen() {
         </View>
 
         {classes.map((classItem) => (
-          <TouchableOpacity
-            key={classItem.id}
-            className="flex-row bg-[#1a2730] rounded-2xl mb-4 overflow-hidden"
-            onPress={() => router.push(`/(tabs)/classes/${classItem.id}`)}
-          >
-            <View className="flex-1 p-5">
-              <View className="flex-row justify-between items-center mb-3">
-                <View className="flex-row items-center gap-1.5 bg-[#0F1419] px-2.5 py-1.5 rounded-lg">
-                  <Ionicons name="people" size={14} color="#94A3B8" />
-                  <Text className="text-xs text-[#94a3b8] font-semibold">
-                    {classItem.students?.length || 0} Students
-                  </Text>
+          <View key={classItem.id} className="relative mb-4">
+            <TouchableOpacity
+              className="flex-row bg-[#1a2730] rounded-2xl overflow-hidden"
+              onPress={() => router.push(`/(tabs)/classes/${classItem.id}`)}
+            >
+              <View className="flex-1 p-5">
+                <View className="flex-row justify-between items-center mb-3">
+                  <View className="flex-row items-center gap-1.5 bg-[#0F1419] px-2.5 py-1.5 rounded-lg">
+                    <Ionicons name="people" size={14} color="#94A3B8" />
+                    <Text className="text-xs text-[#94a3b8] font-semibold">
+                      {classItem.students?.length || 0} Students
+                    </Text>
+                  </View>
+                  <View className="relative">
+                    <TouchableOpacity
+                      className="p-1"
+                      onPress={(e) => {
+                        e.stopPropagation()
+                        setShowOptionsId(showOptionsId === classItem.id ? null : classItem.id)
+                      }}
+                    >
+                      <Ionicons name="ellipsis-vertical" size={20} color="#fff" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View>
-                  <TouchableOpacity
-                    className="p-1"
-                    onPress={() => setShowOptionsId(showOptionsId === classItem.id ? null : classItem.id)}
-                  >
-                    <Ionicons name="ellipsis-vertical" size={20} color="#fff" />
-                  </TouchableOpacity>
-                  {showOptionsId === classItem.id && (
-                    <View className="absolute right-0 top-8 bg-[#192b33] rounded-xl overflow-hidden shadow-lg z-50 w-40">
-                      <TouchableOpacity
-                        className="flex-row items-center gap-3 px-4 py-3 border-b border-[#325567]"
-                        onPress={() => {
-                          setSelectedClass(classItem)
-                          setShowEditModal(true)
-                        }}
-                      >
-                        <Ionicons name="create-outline" size={18} color="#13a4ec" />
-                        <Text className="text-white">Edit Class</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        className="flex-row items-center gap-3 px-4 py-3"
-                        onPress={() => {
-                          setSelectedClass(classItem)
-                          setShowDeleteModal(true)
-                        }}
-                      >
-                        <Ionicons name="trash-outline" size={18} color="#EF4444" />
-                        <Text className="text-red-500">Delete Class</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </View>
+                <Text className="text-2xl font-bold text-white mb-2">{classItem.name}</Text>
+                <Text className="text-sm text-[#94a3b8] mb-4">
+                  {classItem.time} • {classItem.room}
+                </Text>
+                <TouchableOpacity className="flex-row items-center gap-2 bg-[#0F1419] px-4 py-2.5 rounded-lg self-start">
+                  <Text className="text-sm font-semibold text-[#13a4ec]">Manage Class</Text>
+                  <Ionicons name="arrow-forward" size={16} color="#13a4ec" />
+                </TouchableOpacity>
               </View>
-              <Text className="text-2xl font-bold text-white mb-2">{classItem.name}</Text>
-              <Text className="text-sm text-[#94a3b8] mb-4">
-                {classItem.time} • {classItem.room}
-              </Text>
-              <TouchableOpacity className="flex-row items-center gap-2 bg-[#0F1419] px-4 py-2.5 rounded-lg self-start">
-                <Text className="text-sm font-semibold text-[#13a4ec]">Manage Class</Text>
-                <Ionicons name="arrow-forward" size={16} color="#13a4ec" />
-              </TouchableOpacity>
-            </View>
-            <Image source={{ uri: classItem.image }} className="w-35 h-full" />
-          </TouchableOpacity>
+              <Image source={{ uri: classItem.image }} className="w-35 h-full" />
+            </TouchableOpacity>
+
+            {showOptionsId === classItem.id && (
+              <View className="absolute right-5 top-16 bg-[#192b33] rounded-xl overflow-hidden shadow-2xl z-50 w-52 border border-[#325567]">
+                <TouchableOpacity
+                  className="flex-row items-center gap-3 px-4 py-3.5 border-b border-[#325567] active:bg-[#1a2730]"
+                  onPress={(e) => {
+                    e.stopPropagation()
+                    setSelectedClass(classItem)
+                    setShowEditModal(true)
+                    setShowOptionsId(null)
+                  }}
+                >
+                  <Ionicons name="create-outline" size={18} color="#94a3b8" />
+                  <Text className="text-white text-sm font-medium">Edit Class Details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="flex-row items-center gap-3 px-4 py-3.5 border-b border-[#325567] active:bg-[#1a2730]"
+                  onPress={(e) => {
+                    e.stopPropagation()
+                    setShowOptionsId(null)
+                    router.push(`/attendance/${classItem.id}`)
+                  }}
+                >
+                  <Ionicons name="calendar-outline" size={18} color="#94a3b8" />
+                  <Text className="text-white text-sm font-medium">View Attendance</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="flex-row items-center gap-3 px-4 py-3.5 border-b border-[#325567] active:bg-[#1a2730]"
+                  onPress={(e) => {
+                    e.stopPropagation()
+                    setShowOptionsId(null)
+                    router.push(`/grade-students/${classItem.id}`)
+                  }}
+                >
+                  <Ionicons name="school-outline" size={18} color="#94a3b8" />
+                  <Text className="text-white text-sm font-medium">View Grades</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="flex-row items-center gap-3 px-4 py-3.5 active:bg-[#1a2730]"
+                  onPress={(e) => {
+                    e.stopPropagation()
+                    setSelectedClass(classItem)
+                    setShowDeleteModal(true)
+                    setShowOptionsId(null)
+                  }}
+                >
+                  <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                  <Text className="text-red-500 text-sm font-medium">Delete Class</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         ))}
       </ScrollView>
 

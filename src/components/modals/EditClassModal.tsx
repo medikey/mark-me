@@ -7,6 +7,7 @@ import type { EditClassModalProps } from "@/interfaces/interface"
 
 export function EditClassModal({ visible, classItem, onSave, onCancel }: EditClassModalProps) {
   const [name, setName] = useState("")
+  const [subject, setSubject] = useState("")
   const [section, setSection] = useState("")
   const [time, setTime] = useState("")
   const [room, setRoom] = useState("")
@@ -14,6 +15,7 @@ export function EditClassModal({ visible, classItem, onSave, onCancel }: EditCla
   useEffect(() => {
     if (classItem) {
       setName(classItem.name)
+      setSubject(classItem.subject || "")
       setSection(classItem.section)
       setTime(classItem.time)
       setRoom(classItem.room)
@@ -24,6 +26,7 @@ export function EditClassModal({ visible, classItem, onSave, onCancel }: EditCla
     if (!classItem || !name.trim()) return
     onSave({
       name: name.trim(),
+      subject: subject.trim(),
       section: section.trim(),
       time: time.trim(),
       room: room.trim(),
@@ -33,6 +36,7 @@ export function EditClassModal({ visible, classItem, onSave, onCancel }: EditCla
 
   const resetForm = () => {
     setName("")
+    setSubject("")
     setSection("")
     setTime("")
     setRoom("")
@@ -57,6 +61,17 @@ export function EditClassModal({ visible, classItem, onSave, onCancel }: EditCla
                   value={name}
                   onChangeText={setName}
                   placeholder="e.g., Advanced Mathematics"
+                  placeholderTextColor="#64748B"
+                  className="bg-[#0F1419] px-4 py-3 rounded-xl text-white"
+                />
+              </View>
+
+              <View className="mb-4">
+                <Text className="text-sm font-semibold text-[#94a3b8] mb-2">Subject</Text>
+                <TextInput
+                  value={subject}
+                  onChangeText={setSubject}
+                  placeholder="e.g., Mathematics, Science"
                   placeholderTextColor="#64748B"
                   className="bg-[#0F1419] px-4 py-3 rounded-xl text-white"
                 />

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import type { Ionicons } from "@expo/vector-icons"
+import { number } from "zod"
 
 // Core domain interfaces
 export interface Student {
@@ -87,7 +88,7 @@ export interface UserProfile {
   title: string
   email: string
   phone?: string
-  avatar?: string
+  avatar?: string 
 }
 
 // Component prop interfaces

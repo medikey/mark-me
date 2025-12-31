@@ -40,12 +40,12 @@ export default function SettingsScreen() {
             setLoading(true)
             const imageUri = await pickImage(true)
             if (imageUri) {
-              console.log("[v0] Settings - Updating avatar to:", imageUri)
+              console.log("[Settings - Updating avatar to:", imageUri)
               updateUserProfile({ avatar: imageUri })
               success("Profile picture updated!")
             }
           } catch (error) {
-            console.log("[v0] Settings - Error updating avatar:", error)
+            console.log("Settings - Error updating avatar:", error)
             error("Failed to update picture")
           } finally {
             setLoading(false)
