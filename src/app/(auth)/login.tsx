@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"
@@ -7,9 +8,9 @@ import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { z } from "zod"
-import { useApp } from "../../contexts/AppContext"
-import { useToast } from "../../hooks/useToast"
-import { logIn } from "../../utils/auth"
+import { useApp } from "@/contexts/AppContext"
+import { useToast } from "@/hooks/useToast"
+import { logIn } from "@/utils/auth"
 
 const schema = z.object({
   email: z.string().email("Invalid email address"),
@@ -52,10 +53,13 @@ export default function LoginScreen() {
     <KeyboardAvoidingView className="flex-1 bg-[#101c22]" behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScrollView contentContainerClassName="flex-grow justify-center p-6" showsVerticalScrollIndicator={false}>
         <View className="items-center mb-8">
-          <View className="w-24 h-24 rounded-3xl bg-[#192b33] justify-center items-center mb-6">
+         <View className="flex-row justify-center items-center gap-4 mt-10">
+         <View className="w-20 h-20 rounded-3xl bg-[#192b33] justify-center items-center mb-10">
             <Ionicons name="school" size={48} color="#13a4ec" />
           </View>
-          <Text className="text-2xl font-semibold text-white mb-2">MARKMe</Text>
+          <Text className="text-4xl mb-10 font-bold text-white">MarkMe</Text>
+          </View>
+          <Text className="text-white text-3xl font-bold">Welcome Back</Text>
           <Text className="text-base text-[#8b9faa]">Streamline your classroom management.</Text>
         </View>
 
@@ -81,7 +85,7 @@ export default function LoginScreen() {
                 name="email"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="flex-1 text-base text-white focus:outline-none border-none"
+                    className="flex-1 text-base text-white"
                     placeholder="teacher@school.edu"
                     placeholderTextColor="#92b7c9"
                     keyboardType="email-address"
@@ -110,7 +114,7 @@ export default function LoginScreen() {
                 name="password"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    className="focus:outline-none flex-1 text-base text-white"
+                    className="flex-1 text-base text-white"
                     placeholder="••••••••"
                     placeholderTextColor="#92b7c9"
                     secureTextEntry={!passwordVisible}

@@ -13,6 +13,8 @@ export interface Student {
 }
 
 export interface Class {
+  subject: string
+  // [x: string]: ReactNode
   id: string
   name: string
   section: string

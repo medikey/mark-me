@@ -48,10 +48,13 @@ export default function SignUpScreen() {
     <KeyboardAvoidingView className="flex-1 bg-[#101c22]" behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScrollView contentContainerClassName="flex-grow justify-center p-6" showsVerticalScrollIndicator={false}>
         <View className="items-center mb-8">
-          <View className="w-24 h-24 rounded-3xl bg-[#192b33] justify-center items-center mb-6">
+          <View className="flex-row justify-center items-center gap-4 mt-10">
+          <View className="w-20 h-20 rounded-3xl bg-[#192b33] justify-center items-center mb-10">
             <Ionicons name="school" size={48} color="#13a4ec" />
           </View>
-          <Text className="text-2xl font-semibold text-white mb-2">MARKMe</Text>
+          <Text className="text-4xl mb-10 font-bold text-white">MarkMe</Text>
+          </View>
+          <Text className="text-white text-3xl font-bold">Welcome Onboard</Text>
           <Text className="text-base text-[#8b9faa]">Start your journey with us.</Text>
         </View>
 
