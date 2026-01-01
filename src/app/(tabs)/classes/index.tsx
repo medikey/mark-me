@@ -10,7 +10,7 @@ import { EditClassModal } from "@/components/modals/EditClassModal"
 import { Toast } from "@/components/common/Toast"
 import { useToast } from "@/hooks/useToast"
 import type { Class } from "@/interfaces/interface"
-import { Avatar } from "@/components/common/Avatar"
+import { Avatar } from "@/components/common/Avatar" // Import Avatar component
 
 export default function ClassesScreen() {
   const router = useRouter()
@@ -72,7 +72,9 @@ export default function ClassesScreen() {
 
       <View className="flex-row justify-between items-center px-5 pt-15 pb-5">
         <View className="flex-row items-center gap-3">
-          <Avatar key={userProfile.avatar} uri={userProfile.avatar} name={userProfile.name} size={64} />
+          <View className="w-10 h-10">
+            <Avatar uri={userProfile.avatar} name={userProfile.name} size={40} />
+          </View>
           <Text className="text-2xl font-bold text-white">My Classes</Text>
         </View>
         <TouchableOpacity>

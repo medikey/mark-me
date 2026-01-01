@@ -1,7 +1,7 @@
 import * as DocumentPicker from "expo-document-picker"
 import * as Sharing from "expo-sharing"
 import * as ImagePicker from "expo-image-picker"
-import * as FileSystem from "expo-file-system"
+import * as FileSystem from "expo-file-system/legacy"
 
 export interface CSVStudent {
   studentId: string
@@ -53,7 +53,9 @@ export const pickCSVFile = async (): Promise<CSVStudent[]> => {
       throw new Error("File selection cancelled")
     }
 
-    const fileContent = await FileSystem.readAsStringAsync(result.assets[0].uri)
+    const uri = result.assets[0].uri
+    const response = await fetch(uri)
+    const fileContent = await response.text()
     return parseCSV(fileContent)
   } catch (error) {
     throw new Error(`Failed to pick CSV: ${error}`)
@@ -69,17 +71,24 @@ export const generateCSVTemplate = (): string => {
 export const downloadCSVTemplate = async (): Promise<void> => {
   try {
     const csvContent = generateCSVTemplate()
-    const fileUri = `${(FileSystem as any).cacheDirectory}student_template.csv`
+    const blob = new Blob([csvContent], { type: "text/csv" })
+    const reader = new FileReader()
 
-    await FileSystem.writeAsStringAsync(fileUri, csvContent, {
-      encoding: (FileSystem as any).EncodingType.UTF8,
-    })
+    reader.onload = async () => {
+      if (reader.result && typeof reader.result === "string") {
+        const base64 = reader.result.split(",")[1]
+        const fileUri = `${FileSystem.cacheDirectory}student_template.csv`
 
-    if (await Sharing.isAvailableAsync()) {
-      await Sharing.shareAsync(fileUri)
-    } else {
-      throw new Error("Sharing is not available on this device")
+        await FileSystem.writeAsStringAsync(fileUri, csvContent, {
+          encoding: FileSystem.EncodingType.UTF8,
+        })
+
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(fileUri)
+        }
+      }
     }
+    reader.readAsDataURL(blob)
   } catch (error) {
     throw new Error(`Failed to download template: ${error}`)
   }
@@ -107,10 +116,10 @@ export const downloadAttendanceCSV = async (
   try {
     const csvContent = generateAttendanceCSV(className, students, date)
     const fileName = `${className.replace(/\s+/g, "_")}_attendance_${date.replace(/\s+/g, "_")}.csv`
-    const fileUri = `${(FileSystem as any).cacheDirectory}${fileName}`
+    const fileUri = `${FileSystem.cacheDirectory}${fileName}`
 
     await FileSystem.writeAsStringAsync(fileUri, csvContent, {
-      encoding: (FileSystem as any).EncodingType.UTF8,
+      encoding: FileSystem.EncodingType.UTF8,
     })
 
     if (await Sharing.isAvailableAsync()) {
@@ -129,34 +138,24 @@ export const downloadAttendanceCSV = async (
 // Pick image from gallery or camera
 export const pickImage = async (useCamera = false): Promise<string | null> => {
   try {
-    // Request permissions
-    const { status } = useCamera
-      ? await ImagePicker.requestCameraPermissionsAsync()
-      : await ImagePicker.requestMediaLibraryPermissionsAsync()
-
-    if (status !== "granted") {
-      throw new Error("Permission denied")
-    }
-
     const result = useCamera
       ? await ImagePicker.launchCameraAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
           aspect: [1, 1],
-          quality: 0.8,
+          quality: 1,
         })
       : await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
           aspect: [1, 1],
-          quality: 0.8,
+          quality: 1,
         })
 
-    if (result.canceled) {
-      return null
+    if (!result.canceled) {
+      return result.assets[0].uri
     }
-
-    return result.assets[0].uri
+    return null
   } catch (error) {
     throw new Error(`Failed to pick image: ${error}`)
   }

@@ -207,7 +207,7 @@ export default function CreateClassScreen() {
               )}
             </View>
             <Text className="text-base font-bold text-white text-center mb-1">Upload CSV File</Text>
-            <Text className="text-sm text-[#64748b] text-center max-w-[240px] leading-5 mb-6">
+            <Text className="text-sm text-[#64748b] text-center max-w-60 leading-5 mb-6">
               Tap to browse your files. Supports .csv format only.
             </Text>
             <View className="bg-[#1e293b] px-4 py-2.5 rounded-lg">

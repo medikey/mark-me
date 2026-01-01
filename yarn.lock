@@ -2885,7 +2885,7 @@ expo-document-picker@^14.0.8:
   resolved "https://registry.yarnpkg.com/expo-document-picker/-/expo-document-picker-14.0.8.tgz#ca1d99cc432c48e69a6390eb035f3301557e3699"
   integrity sha512-3tyQKpPqWWFlI8p9RiMX1+T1Zge5mEKeBuXWp1h8PEItFMUDSiOJbQ112sfdC6Hxt8wSxreV9bCRl/NgBdt+fA==
 
-expo-file-system@^19.0.21, expo-file-system@~19.0.21:
+expo-file-system@~19.0.21:
   version "19.0.21"
   resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-19.0.21.tgz#e96a68107fb629cf0dd1906fe7b46b566ff13e10"
   integrity sha512-s3DlrDdiscBHtab/6W1osrjGL+C2bvoInPJD7sOwmxfJ5Woynv2oc+Fz1/xVXaE/V7HE/+xrHC/H45tu6lZzzg==
@@ -2985,9 +2985,9 @@ expo-server@^1.0.5:
   integrity sha512-IGR++flYH70rhLyeXF0Phle56/k4cee87WeQ4mamS+MkVAVP+dDlOHf2nN06Z9Y2KhU0Gp1k+y61KkghF7HdhA==
 
 expo-sharing@~13.0.2:
-  version "14.0.9-canary-20251223-b83b31e"
-  resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-14.0.9-canary-20251223-b83b31e.tgz#86fd71efc95550d12434be7b767944749a120170"
-  integrity sha512-StFLeen5+pXGSlt48kUZMAJ3g3pTjo2JK8PsCTFdNoh1/tn3NEdKj3AeaRe/fu9LERB4DToVkCxUv97dk8V5bQ==
+  version "14.0.9-canary-20251230-fc48ddc"
+  resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-14.0.9-canary-20251230-fc48ddc.tgz#3db01f594c64624e9bd7798af574d0b7812a7a55"
+  integrity sha512-XwOJjpihi9qY/kalXJSOb0NglnjtUJqTe5ybE2dvg4CcOnqDbPhZh41lXNCh3Jg6L9HPrzgX/HVPFYRFlM6ymQ==
 
 expo-splash-screen@~31.0.8:
   version "31.0.13"

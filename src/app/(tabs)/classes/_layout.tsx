@@ -21,7 +21,7 @@ export default function ClassesLayout() {
         name="[id]"
         options={{
           title: "Class Details",
-          headerShown: true,
+          headerShown: false,
         }}
       />
     </Stack>

@@ -40,12 +40,14 @@ export default function SettingsScreen() {
             setLoading(true)
             const imageUri = await pickImage(true)
             if (imageUri) {
-              console.log("[Settings - Updating avatar to:", imageUri)
+              console.log("[v0] Settings - Updating avatar to:", imageUri)
               updateUserProfile({ avatar: imageUri })
-              success("Profile picture updated!")
+              setTimeout(() => {
+                success("Profile picture updated!")
+              }, 100)
             }
           } catch (error) {
-            console.log("Settings - Error updating avatar:", error)
+            console.log("[v0] Settings - Error updating avatar:", error)
             error("Failed to update picture")
           } finally {
             setLoading(false)
@@ -61,7 +63,9 @@ export default function SettingsScreen() {
             if (imageUri) {
               console.log("[v0] Settings - Updating avatar to:", imageUri)
               updateUserProfile({ avatar: imageUri })
-              success("Profile picture updated!")
+              setTimeout(() => {
+                success("Profile picture updated!")
+              }, 100)
             }
           } catch (error) {
             console.log("[v0] Settings - Error updating avatar:", error)
@@ -172,7 +176,10 @@ function SettingItem({
   return (
     <TouchableOpacity className="flex-row justify-between items-center p-4" onPress={onPress}>
       <View className="flex-row items-center gap-3">
-        <View className="w-10 h-10 rounded-full justify-center items-center" style={{ backgroundColor: iconBg }}>
+        <View
+          className="w-10 h-10 rounded-full justify-center items-center shrink-0"
+          style={{ backgroundColor: iconBg }}
+        >
           <Ionicons name={icon} size={20} color="#fff" />
         </View>
         <Text className="text-base font-semibold text-white">{title}</Text>

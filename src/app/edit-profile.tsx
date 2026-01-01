@@ -71,7 +71,7 @@ export default function EditProfileScreen() {
     })
 
     success("Profile updated successfully")
-    setTimeout(() => router.back(), 1000)
+    setTimeout(() => router.back(), 500)
   }
 
   return (
