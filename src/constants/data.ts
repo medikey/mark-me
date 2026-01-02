@@ -1,9 +1,10 @@
-import type { Class } from "../interfaces/interface"
+import type { Class } from "@/interfaces/interface"
 
 export const mockClasses: Class[] = [
   {
     id: "1",
     name: "Advanced Mathematics",
+    subject: "Mathematics", // Added subject property
     section: "Section A",
     time: "10:00 AM",
     room: "Room 301",
@@ -23,6 +24,7 @@ export const mockClasses: Class[] = [
   {
     id: "2",
     name: "English Literature",
+    subject: "English", // Added subject property
     section: "Section B",
     time: "01:00 PM",
     room: "Room 204",
@@ -38,6 +40,7 @@ export const mockClasses: Class[] = [
   {
     id: "3",
     name: "Physics Lab",
+    subject: "Physics", // Added subject property
     section: "Lab 4B",
     time: "03:00 PM",
     room: "Lab 4B",

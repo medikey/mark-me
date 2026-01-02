@@ -91,8 +91,8 @@ export default function CreateClassScreen() {
       name: className.trim(),
       section: "New Section",
       subject: subject.trim(),
-      time: classTime.trim() || "TBD",
-      room: location.trim() || "TBD",
+      time: classTime.trim(),
+      room: location.trim(),
       studentCount: students.length,
       image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400",
       students,
@@ -185,7 +185,6 @@ export default function CreateClassScreen() {
         </View>
 
         <View className="mb-8">
-          <Text className="text-sm font-medium text-[#cbd5e1] mb-2 ml-1">Student List</Text>
           <View className="flex-row items-center justify-between mb-2 ml-1">
             <Text className="text-sm font-medium text-[#cbd5e1]">Student List</Text>
             <View className="bg-[#1e293b] px-2 py-1 rounded">
@@ -221,7 +220,7 @@ export default function CreateClassScreen() {
             className="flex-row items-center justify-center gap-1.5 mb-5"
           >
             <Ionicons name="download-outline" size={18} color="#13a4ec" />
-            <Text className="text-sm font-medium text-[#13a4ec] underline">Download Sample CSV Template</Text>
+            <Text className="text-sm font-medium text-[#13a4ec]">Download Sample CSV Template</Text>
           </TouchableOpacity>
 
           <View className="flex-row items-center mb-5">
@@ -249,7 +248,7 @@ export default function CreateClassScreen() {
         </View>
 
         <View className="rounded-xl bg-[#15232d] p-4 flex-row gap-3 items-start border border-[#1e3a4a] mb-32">
-          <Ionicons name="information-circle-outline" size={20} color="#13a4ec" className="mt-0.5" />
+          <Ionicons name="information-circle-outline" size={20} color="#13a4ec" className="mt-0.5 rounded-2xl" />
           <Text className="flex-1 text-sm text-[#94a3b8] leading-5">
             Make sure your CSV includes columns for <Text className="font-medium text-white">Student ID</Text>,{" "}
             <Text className="font-medium text-white">First Name</Text>, and{" "}

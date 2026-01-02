@@ -1,15 +1,44 @@
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "MarkMe",
     "userInterfaceStyle": "automatic",
     "orientation": "default",
+    "icon": "./assets/images/Markme.png",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
     "web": {
-      "output": "static"
+      "output": "static",
+      "favicon": "./assets/images/Markme.png"
+    },
+    "android": {
+      "package": "com.devfoma.markme",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/Markme.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/Markme.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "image": "./assets/images/Markme.png",
+            "backgroundColor": "#0f172a"
+          }
+        }
+      ]
     ],
-    "name": "mark-me",
-    "slug": "mark-me"
+    "name": "MarkMe",
+    "slug": "MarkMe"
   }
 }

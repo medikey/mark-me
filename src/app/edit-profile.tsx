@@ -110,7 +110,7 @@ export default function EditProfileScreen() {
 
         <Text className="text-sm font-semibold text-white mb-2">Job Title *</Text>
         <TextInput
-          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-4"
+          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-4 focus:outline-none"
           placeholder="Enter your job title"
           placeholderTextColor="#64748B"
           value={title}
@@ -119,7 +119,7 @@ export default function EditProfileScreen() {
 
         <Text className="text-sm font-semibold text-white mb-2">Email Address *</Text>
         <TextInput
-          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-4"
+          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-4 focus:outline-none"
           placeholder="Enter your email"
           placeholderTextColor="#64748B"
           value={email}
@@ -130,7 +130,7 @@ export default function EditProfileScreen() {
 
         <Text className="text-sm font-semibold text-white mb-2">Phone Number</Text>
         <TextInput
-          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-6"
+          className="bg-[#192b33] rounded-xl border border-[#325567] px-4 py-4 text-base text-white mb-6 focus:outline-none"
           placeholder="Enter your phone number"
           placeholderTextColor="#64748B"
           value={phone}

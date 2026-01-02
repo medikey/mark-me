@@ -85,7 +85,7 @@ export default function AddStudentScreen() {
             <View className="mb-4">
               <Text className="text-sm font-medium mb-2 text-[#8b9faa]">Student Name</Text>
               <TextInput
-                className="h-14 px-4 text-base text-white bg-[#0F1419] border border-[#325567] rounded-xl"
+                className="h-14 px-4 text-base text-white bg-[#0F1419] border border-[#325567] rounded-xl focus:outline-none"
                 value={studentName}
                 onChangeText={setStudentName}
                 placeholder="Enter full name"
@@ -97,7 +97,7 @@ export default function AddStudentScreen() {
             <View className="mb-4">
               <Text className="text-sm font-medium mb-2 text-[#8b9faa]">Student ID</Text>
               <TextInput
-                className="h-14 px-4 text-base text-white bg-[#0F1419] border border-[#325567] rounded-xl"
+                className="h-14 px-4 text-base text-white bg-[#0F1419] border border-[#325567] rounded-xl focus:outline-none"
                 value={studentId}
                 onChangeText={setStudentId}
                 placeholder="Enter student ID"

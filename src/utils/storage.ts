@@ -6,7 +6,8 @@ const STORAGE_KEYS = {
   CLASSES: "@markme:classes",
   ASSIGNMENTS: "@markme:assignments",
   GRADES: "@markme:grades",
-  USER_PROFILE: "@markme:userProfile",
+  USER_PROFILE: "@markme:userProfile",  
+  ONBOARDING: "@markme:hasSeenOnboarding",
 }
 
 export const storage = {
@@ -26,6 +27,31 @@ export const storage = {
     } catch (error) {
       console.error("Error loading auth state:", error)
       return false
+    }
+  },
+
+    // Onboarding helper methods
+  /**
+   * Marks onboarding as complete
+   * Called when user completes onboarding or signs up/logs in
+   */
+  async setOnboardingComplete(): Promise<void> {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING, "true")
+    } catch (error) {
+      console.error("Error saving onboarding state:", error)
+    }
+  },
+  
+  /**
+   * Resets onboarding state (useful for testing)
+   * Allows user to see onboarding screens again
+   */
+  async resetOnboarding(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.ONBOARDING)
+    } catch (error) {
+      console.error("Error resetting onboarding state:", error)
     }
   },
 

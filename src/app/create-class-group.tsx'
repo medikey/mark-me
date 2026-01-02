@@ -1,0 +1,229 @@
+"use client"
+
+import { useState } from "react"
+import { View, Text, TextInput, ScrollView, TouchableOpacity } from "react-native"
+import { useRouter } from "expo-router"
+import { Ionicons } from "@expo/vector-icons"
+import { useApp } from "@/contexts/AppContext"
+import { Toast } from "@/components/common/Toast"
+import { useToast } from "@/hooks/useToast"
+
+export default function CreateClassGroupScreen() {
+  const router = useRouter()
+  const { createClassGroup, classes, classGroups } = useApp()
+  const { toast, hide, show } = useToast()
+
+  // Form state
+  const [groupName, setGroupName] = useState("")
+  const [description, setDescription] = useState("")
+  const [selectedItems, setSelectedItems] = useState<{
+    classIds: string[]
+    subGroupIds: string[]
+  }>({
+    classIds: [],
+    subGroupIds: [],
+  })
+
+  /**
+   * Navigate to Add Items screen
+   * Opens a selection modal to choose classes and groups to add
+   */
+  const handleAddItems = () => {
+    router.push("/add-items-to-group")
+  }
+
+  /**
+   * Remove a class from the group
+   */
+  const handleRemoveClass = (classId: string) => {
+    setSelectedItems((prev) => ({
+      ...prev,
+      classIds: prev.classIds.filter((id) => id !== classId),
+    }))
+  }
+
+  /**
+   * Remove a sub-group from the group
+   */
+  const handleRemoveSubGroup = (groupId: string) => {
+    setSelectedItems((prev) => ({
+      ...prev,
+      subGroupIds: prev.subGroupIds.filter((id) => id !== groupId),
+    }))
+  }
+
+  /**
+   * Save the new class group
+   * Validates input and creates the group with selected items
+   */
+  const handleSave = () => {
+    // Validate group name
+    if (!groupName.trim()) {
+      show("Please enter a group name", "error")
+      return
+    }
+
+    try {
+      // Create the group
+      const newGroup = createClassGroup({
+        name: groupName.trim(),
+        description: description.trim() || undefined,
+        classIds: selectedItems.classIds,
+        subGroupIds: selectedItems.subGroupIds,
+      })
+
+      show("Class group created successfully", "success")
+      setTimeout(() => router.back(), 1000)
+    } catch (error) {
+      show("Failed to create class group", "error")
+      console.error(error)
+    }
+  }
+
+  // Get selected classes and groups for display
+  const selectedClasses = classes.filter((c) => selectedItems.classIds.includes(c.id))
+  const selectedSubGroups = classGroups.filter((g) => selectedItems.subGroupIds.includes(g.id))
+
+  return (
+    <View className="flex-1 bg-[#101c22]">
+      <Toast visible={toast.visible} message={toast.message} type={toast.type} onHide={hide} />
+
+      {/* Header */}
+      <View className="h-12 w-full bg-[#101c22]" />
+      <View className="flex-row items-center justify-between px-4 pb-4 bg-[#101c22] border-b border-[#325567]/30">
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="w-10 h-10 items-center justify-center rounded-full active:bg-[#192b33]"
+        >
+          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+        </TouchableOpacity>
+        <Text className="flex-1 text-center text-lg font-bold text-white pr-10">Create Class Group</Text>
+        <View className="w-10" />
+      </View>
+
+      <ScrollView className="flex-1 px-5 pt-4 pb-32" showsVerticalScrollIndicator={false}>
+        {/* Primary Input Section */}
+        <View className="mb-8">
+          {/* Group Name Input */}
+          <Text className="text-base font-bold text-white mb-2">Class Group Name</Text>
+          <TextInput
+            className="w-full rounded-xl border border-[#325567] bg-[#192b33] px-4 py-4 text-base text-white placeholder:text-[#92b7c9] shadow-sm"
+            placeholder="e.g., Science Department"
+            placeholderTextColor="#92b7c9"
+            value={groupName}
+            onChangeText={setGroupName}
+          />
+        </View>
+
+        {/* Description Input */}
+        <View className="mb-8">
+          <View className="flex-row items-center justify-between mb-2">
+            <Text className="text-base font-bold text-white">Description</Text>
+            <Text className="text-sm text-[#92b7c9]/70">Optional</Text>
+          </View>
+          <TextInput
+            className="w-full rounded-xl border border-[#325567] bg-[#192b33] px-4 py-3 text-base text-white placeholder:text-[#92b7c9] min-h-[100px]"
+            placeholder="Add details about this group's purpose..."
+            placeholderTextColor="#92b7c9"
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+            value={description}
+            onChangeText={setDescription}
+          />
+        </View>
+
+        {/* Structure Section */}
+        <View className="mb-8">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-lg font-bold text-white">Structure</Text>
+          </View>
+
+          {/* List of selected items */}
+          {selectedClasses.length > 0 || selectedSubGroups.length > 0 ? (
+            <View className="space-y-3 mb-3">
+              {/* Display selected classes */}
+              {selectedClasses.map((classItem) => (
+                <View
+                  key={classItem.id}
+                  className="flex-row items-center justify-between gap-3 rounded-xl border border-[#325567] bg-[#192b33] p-3 pr-2 shadow-sm"
+                >
+                  <View className="flex-row items-center gap-3 flex-1 overflow-hidden">
+                    <View className="w-10 h-10 rounded-lg bg-primary/10 items-center justify-center">
+                      <Ionicons name="school" size={20} color="#13a4ec" />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-base font-medium text-white" numberOfLines={1}>
+                        {classItem.name}
+                      </Text>
+                      <Text className="text-xs text-[#92b7c9]">Class • {classItem.studentCount} Students</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveClass(classItem.id)}
+                    className="w-9 h-9 items-center justify-center rounded-lg text-slate-400 hover:text-red-500"
+                  >
+                    <Ionicons name="trash-outline" size={20} color="#EF4444" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+
+              {/* Display selected sub-groups */}
+              {selectedSubGroups.map((group) => (
+                <View
+                  key={group.id}
+                  className="flex-row items-center justify-between gap-3 rounded-xl border border-[#325567] bg-[#192b33] p-3 pr-2 shadow-sm"
+                >
+                  <View className="flex-row items-center gap-3 flex-1 overflow-hidden">
+                    <View className="w-10 h-10 rounded-lg bg-primary/10 items-center justify-center">
+                      <Ionicons name="folder" size={20} color="#13a4ec" />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-base font-medium text-white" numberOfLines={1}>
+                        {group.name}
+                      </Text>
+                      <Text className="text-xs text-[#92b7c9]">
+                        Group • {group.classIds.length} classes, {group.subGroupIds.length} sub-groups
+                      </Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveSubGroup(group.id)}
+                    className="w-9 h-9 items-center justify-center rounded-lg"
+                  >
+                    <Ionicons name="trash-outline" size={20} color="#EF4444" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          ) : null}
+
+          {/* Add Items Button */}
+          <TouchableOpacity
+            onPress={handleAddItems}
+            className="w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-[#325567] bg-[#192b33]/30 py-8"
+          >
+            <View className="w-12 h-12 items-center justify-center rounded-full bg-[#325567] text-[#92b7c9]">
+              <Ionicons name="add" size={28} color="#92b7c9" />
+            </View>
+            <View className="items-center gap-1">
+              <Text className="text-sm font-bold text-white">Add Sub-Class or Group</Text>
+              <Text className="text-xs text-[#92b7c9]">Tap to expand hierarchy</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+      {/* Bottom Action Bar */}
+      <View className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#101c22] via-[#101c22] to-transparent pt-10 pb-8">
+        <TouchableOpacity
+          onPress={handleSave}
+          className="w-full flex-row items-center justify-center gap-2 rounded-xl bg-[#13a4ec] py-4 shadow-lg shadow-primary/30 active:scale-[0.98]"
+        >
+          <Ionicons name="checkmark-circle" size={24} color="#ffffff" />
+          <Text className="text-base font-bold text-white">Save Class Group</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}

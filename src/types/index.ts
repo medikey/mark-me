@@ -1,48 +1,40 @@
-// export interface Student {
-//   id: string
-//   name: string
-//   avatar?: string
-//   status: "present" | "absent"
-//   grades?: {
-//     [criteria: string]: number
-//   }
-// }
+// This file now serves as a compatibility layer for any legacy imports
 
-// export interface Class {
-//   id: string
-//   name: string
-//   subject: string
-//   section: string
-//   time: string
-//   room: string
-//   studentCount: number
-//   image: string
-//   students: Student[]
-//   semester: string
-//   gradingCriteria?: string[]
-// }
+/**
+ * Type definitions for MARKMe application
+ *
+ * Note: All types are defined in @/interfaces/interface.d.ts
+ * This file re-exports them for backward compatibility and convenience
+ */
 
-// export interface AttendanceRecord {
-//   classId: string
-//   date: string
-//   students: {
-//     studentId: string
-//     status: "present" | "absent"
-//   }[]
-// }
-
-// export interface GradeRecord {
-//   classId: string
-//   studentId: string
-//   date: string
-//   grades: {
-//     [criteria: string]: number
-//   }
-// }
-// export interface GradingCriterion {
-//   id: string
-//   name: string
-//   maxScore: number
-// }
-
-// export type { Student, Class, AttendanceRecord, GradeRecord, GradingCriterion } from "@/interfaces/interface"
+export type {
+  // Core domain types
+  Student,
+  Class,
+  AttendanceRecord,
+  // GradeRecord,
+  // Context types
+  AppContextType,
+  UserProfile,
+  // Component prop types
+  ButtonProps,
+  HeaderProps,
+  CardProps,
+  AvatarProps,
+  ToggleProps,
+  ClassCardProps,
+  StudentCardProps,
+  StatsCardProps,
+  // Toast and Modal types
+  ToastType,
+  ToastProps,
+  ConfirmModalProps,
+  EditStudentModalProps,
+  EditClassModalProps,
+  // Grading system types
+  GradingCriterion,
+  Assignment,
+  StudentGrade,
+  ManageCriteriaModalProps,
+  GradeInputModalProps,
+} from "@/interfaces/interface"
