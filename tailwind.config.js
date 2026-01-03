@@ -9,6 +9,13 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "375px", // small mobile breakpoint
+        sm: "480px", // standard mobile breakpoint
+        md: "640px", // tablet breakpoint
+        lg: "1024px", // large tablets and small desktops
+        xl: "1280px", // desktops
+      },
       colors: {
         dark: {
           DEFAULT: "#101c22",
@@ -70,6 +77,29 @@ module.exports = {
         lg: "0.75rem",
         xl: "1rem",
         full: "9999px",
+      },
+      
+      keyframes: {
+        "accordion-down": {
+          from: {
+            height: "0",
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
+        },
+        "accordion-up": {
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: "0",
+          },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },

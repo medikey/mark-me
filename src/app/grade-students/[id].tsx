@@ -233,7 +233,7 @@ export default function GradeStudentsScreen() {
                             <TouchableOpacity
                               onPress={() => decrementGrade(student.id, criterionId)}
                               disabled={!editMode}
-                              className="w-8 h-8 rounded-lg bg-white dark:bg-[#233c48] items-center justify-center border border-[#325567] active:bg-[#192b33]"
+                              className="w-8 h-8 rounded-lg bg-[#233c48] items-center justify-center border border-[#325567] active:bg-[#192b33]"
                             >
                               <Ionicons name="remove" size={16} color="#6b7280" />
                             </TouchableOpacity>
@@ -248,13 +248,13 @@ export default function GradeStudentsScreen() {
                                 editable={editMode}
                                 placeholder="-"
                                 placeholderTextColor="#6b7280"
-                                className="w-full text-center bg-white dark:bg-[#233c48] border border-[#325567] rounded-lg text-sm font-bold text-white py-1.5"
+                                className="w-full text-center bg-[#233c48] border border-[#325567] rounded-lg text-sm font-bold text-white py-1.5"
                               />
                             </View>
                             <TouchableOpacity
                               onPress={() => incrementGrade(student.id, criterionId)}
                               disabled={!editMode}
-                              className="w-8 h-8 rounded-lg bg-white dark:bg-[#233c48] items-center justify-center border border-[#325567] active:bg-[#192b33]"
+                              className="w-8 h-8 rounded-lg bg-[#233c48] items-center justify-center border border-[#325567] active:bg-[#192b33]"
                             >
                               <Ionicons name="add" size={16} color="#6b7280" />
                             </TouchableOpacity>

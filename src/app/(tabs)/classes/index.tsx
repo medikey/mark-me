@@ -10,7 +10,8 @@ import { EditClassModal } from "@/components/modals/EditClassModal"
 import { CreateOptionModal } from "@/components/modals/CreateOptionModal"
 import { Toast } from "@/components/common/Toast"
 import { useToast } from "@/hooks/useToast"
-import type { Class } from "@/interfaces/interface"
+import type { Class, ClassGroup } from "@/interfaces/interface"
+import { ViewGroupModal } from "@/components/modals/ViewGroupModal"
 
 export default function ClassesScreen() {
   const router = useRouter()
@@ -23,6 +24,8 @@ export default function ClassesScreen() {
   const [showOptionsId, setShowOptionsId] = useState<string | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
+  const [showGroupModal, setShowGroupModal] = useState(false)
+  const [selectedGroupForPreview, setSelectedGroupForPreview] = useState<ClassGroup | null>(null)
 
   const handleDeleteClass = () => {
     if (selectedClass) {
@@ -54,6 +57,11 @@ export default function ClassesScreen() {
       }
       return newSet
     })
+  }
+
+  const openGroupPreview = (group: ClassGroup) => {
+    setSelectedGroupForPreview(group)
+    setShowGroupModal(true)
   }
 
   const { classes: rootClasses, groups: rootGroups } = getRootItems()
@@ -99,6 +107,15 @@ export default function ClassesScreen() {
         onCancel={() => setShowCreateModal(false)}
       />
 
+      <ViewGroupModal
+        visible={showGroupModal}
+        group={selectedGroupForPreview}
+        onClose={() => {
+          setShowGroupModal(false)
+          setSelectedGroupForPreview(null)
+        }}
+      />
+
       <View className="flex-row justify-between items-center px-5 pt-12 pb-4 bg-[#101c22]/95 border-b border-gray-800">
         <View className="flex-row items-center gap-3">
           <View className="w-10 h-10 rounded-full overflow-hidden border border-gray-700">
@@ -115,7 +132,7 @@ export default function ClassesScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView className="flex-1 px-4 pt-6" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-4 pt-6 pb-32" showsVerticalScrollIndicator={false}>
         <View className="flex-row justify-between items-center mb-5">
           <Text className="text-sm font-medium text-[#92b7c9]">Fall Semester 2023</Text>
           <View className="bg-[#13a4ec]/10 px-3 py-1 rounded-full">
@@ -123,10 +140,12 @@ export default function ClassesScreen() {
           </View>
         </View>
 
-        <View className="flex-col gap-4">
+        <View className="flex-col gap-4 mb-20">
           {rootGroups.map((group) => {
             const isExpanded = expandedGroups.has(group.id)
             const { classes: groupClasses, subGroups } = getGroupChildren(group.id)
+            const classCount = groupClasses.length
+            const subGroupCount = subGroups.length
 
             return (
               <View key={group.id} className="flex-col">
@@ -152,20 +171,32 @@ export default function ClassesScreen() {
                           <Text className="font-bold text-white">{group.name}</Text>
                         </View>
                         <Text className="text-xs text-[#92b7c9] ml-7">
-                          {groupClasses.length} {groupClasses.length === 1 ? "Class" : "Classes"}
+                          {classCount} {classCount === 1 ? "Class" : "Classes"}
+                          {subGroupCount > 0 && ` • ${subGroupCount} Sub-group${subGroupCount === 1 ? "" : "s"}`}
                         </Text>
                       </View>
                     </View>
 
-                    <TouchableOpacity
-                      className="p-2"
-                      onPress={(e) => {
-                        e.stopPropagation()
-                        router.push(`/(tabs)/classes/groups/${group.id}`)
-                      }}
-                    >
-                      <Ionicons name="ellipsis-vertical" size={20} color="#92b7c9" />
-                    </TouchableOpacity>
+                    <View className="flex-row items-center gap-2">
+                      <TouchableOpacity
+                        className="p-2"
+                        onPress={(e) => {
+                          e.stopPropagation()
+                          openGroupPreview(group)
+                        }}
+                      >
+                        <Ionicons name="eye-outline" size={20} color="#13a4ec" />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        className="p-2"
+                        onPress={(e) => {
+                          e.stopPropagation()
+                          router.push(`/(tabs)/classes/groups/${group.id}`)
+                        }}
+                      >
+                        <Ionicons name="ellipsis-vertical" size={20} color="#92b7c9" />
+                      </TouchableOpacity>
+                    </View>
                   </TouchableOpacity>
 
                   {isExpanded && groupClasses.length > 0 && (
@@ -216,7 +247,7 @@ export default function ClassesScreen() {
                                 </TouchableOpacity>
                               </View>
 
-                              <View className="w-24 min-w-25 bg-gray-700">
+                              <View className="w-20 h-28 min-w-20 bg-gray-700 overflow-hidden">
                                 <Image source={{ uri: classItem.image }} className="w-full h-full" resizeMode="cover" />
                               </View>
                             </TouchableOpacity>
@@ -256,6 +287,17 @@ export default function ClassesScreen() {
                                 >
                                   <Ionicons name="school-outline" size={18} color="#94a3b8" />
                                   <Text className="text-white text-sm font-medium">View Grades</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                  className="flex-row items-center gap-3 px-4 py-3.5 border-b border-[#325567] active:bg-[#1a2730]"
+                                  onPress={(e) => {
+                                    e.stopPropagation()
+                                    setShowOptionsId(null)
+                                    router.push(`/class-report/${classItem.id}`)
+                                  }}
+                                >
+                                  <Ionicons name="bar-chart-outline" size={18} color="#94a3b8" />
+                                  <Text className="text-white text-sm font-medium">View Report</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                   className="flex-row items-center gap-3 px-4 py-3.5 active:bg-[#1a2730]"
@@ -324,7 +366,7 @@ export default function ClassesScreen() {
                   </TouchableOpacity>
                 </View>
 
-                <View className="w-32 min-w-30 bg-gray-700">
+                <View className="w-20 h-28 min-w-20 bg-gray-700 overflow-hidden">
                   <Image source={{ uri: classItem.image }} className="w-full h-full" resizeMode="cover" />
                 </View>
               </TouchableOpacity>
@@ -366,6 +408,17 @@ export default function ClassesScreen() {
                     <Text className="text-white text-sm font-medium">View Grades</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
+                    className="flex-row items-center gap-3 px-4 py-3.5 border-b border-[#325567] active:bg-[#1a2730]"
+                    onPress={(e) => {
+                      e.stopPropagation()
+                      setShowOptionsId(null)
+                      router.push(`/class-report/${classItem.id}`)
+                    }}
+                  >
+                    <Ionicons name="bar-chart-outline" size={18} color="#94a3b8" />
+                    <Text className="text-white text-sm font-medium">View Report</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
                     className="flex-row items-center gap-3 px-4 py-3.5 active:bg-[#1a2730]"
                     onPress={(e) => {
                       e.stopPropagation()
@@ -394,23 +447,14 @@ export default function ClassesScreen() {
             </View>
           )}
         </View>
-
-        <View className="h-24" />
       </ScrollView>
 
       <TouchableOpacity
-        className="absolute bottom-24 right-5 z-30 flex-row items-center gap-2 bg-[#13a4ec] pl-4 pr-6 py-3.5 rounded-full shadow-lg"
-        style={{
-          shadowColor: "#13a4ec",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          elevation: 8,
-        }}
+        className="absolute bottom-24 right-6 w-35 gap-2 h-16 bg-[#13a4ec] rounded-full items-center justify-center active:opacity-75 active:bg-[#0d8db8] shadow-lg z-40 flex-row"
         onPress={() => setShowCreateModal(true)}
       >
         <Ionicons name="add" size={28} color="#fff" />
-        <Text className="text-base font-bold text-white tracking-wide">Create</Text>
+        <Text className="text-white font-bold">Create</Text>
       </TouchableOpacity>
     </View>
   )

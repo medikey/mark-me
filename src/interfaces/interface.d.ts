@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import type { Ionicons } from "@expo/vector-icons"
 import type { AttendanceRecord } from "./AttendanceRecord" // Added import for AttendanceRecord
 
@@ -18,10 +19,9 @@ export interface AttendanceRecord {
   }>
   takenBy?: string // Educator who recorded attendance
   notes?: string // Optional notes about the session
-  createdAt: string
-  updatedAt: string
+  createdAt: string // ISO timestamp when record was created
+  updatedAt: string // ISO timestamp when record was last updated
 }
-
 export interface Student {
   id: string
   name: string
@@ -104,6 +104,10 @@ export interface AppContextType {
   getGroupChildren: (groupId: string) => { classes: Class[]; subGroups: ClassGroup[] }
   getRootItems: () => { classes: Class[]; groups: ClassGroup[] } // Get items not in any group
 
+  getAllGroupAncestors: (groupId: string) => ClassGroup[] // Returns ClassGroup[] instead of string[]
+  getAllGroupDescendants: (groupId: string) => ClassGroup[] // Returns ClassGroup[] instead of string[]
+  getGroupItemCounts: (groupId: string) => { classCount: number; subGroupCount: number } // NEW - Added getGroupItemCounts to interface definition
+
   // Student management methods
   updateStudentStatus: (classId: string, studentId: string, status: "present" | "absent") => void
   addStudent: (classId: string, student: Student) => void
@@ -125,20 +129,6 @@ export interface AppContextType {
     averageAttendance: number
     studentStats: { studentId: string; presentCount: number; absentCount: number; rate: number }[]
   }
-  
-   getGroupChildren: (groupId: string) => {
-    classes: Class[]
-    subGroups: ClassGroup[]
-  }
-
-  getRootItems: () => {
-    classes: Class[]
-    groups: ClassGroup[]
-  }
-
-  // ✅ ADD THIS
-  getAllGroupAncestors: (groupId: string) => ClassGroup[]
-  getAllGroupDescendants: (groupId: string) => ClassGroup[]
 
   // System methods
   logout: () => Promise<void>

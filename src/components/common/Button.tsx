@@ -21,7 +21,7 @@ export function Button({ title, onPress, variant = "primary", icon, loading, dis
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled || loading}
-      className={`flex-row items-center justify-center gap-2 py-4 px-6 rounded-xl ${variantStyles[variant]} ${disabled ? "opacity-50" : ""} ${className}`}
+      className={`flex-row items-center overflow-hidden justify-center gap-2 py-4 px-6 rounded-xl ${variantStyles[variant]} ${disabled ? "opacity-50" : ""} ${className}`}
     >
       {loading ? (
         <ActivityIndicator color="#fff" />
