@@ -144,9 +144,7 @@ export default function GradeStudentsScreen() {
                     key={criterion.id}
                     onPress={() => toggleCriterion(criterion.id)}
                     className={`h-8 flex-row items-center justify-center gap-2 px-4 rounded-full ${
-                      selectedCriteria.includes(criterion.id)
-                        ? "bg-[#13a4ec] shadow-lg shadow-[#13a4ec]/20"
-                        : "bg-[#1a2730]"
+                      selectedCriteria.includes(criterion.id) ? "bg-[#13a4ec]" : "bg-[#1a2730]"
                     }`}
                   >
                     <Text
@@ -284,7 +282,7 @@ export default function GradeStudentsScreen() {
             show("Grades saved successfully", "success")
             router.back()
           }}
-          className="w-full bg-[#13a4ec] h-12 rounded-xl items-center justify-center flex-row gap-2 active:bg-[#0b8acb] shadow-lg shadow-[#13a4ec]/30"
+          className="w-full bg-[#13a4ec] h-12 rounded-xl items-center justify-center flex-row gap-2 active:bg-[#0b8acb]"
         >
           <Ionicons name="save-outline" size={20} color="#ffffff" />
           <Text className="text-base font-bold text-white">Save Grades</Text>

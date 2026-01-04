@@ -149,7 +149,7 @@ export function ManageCriteriaModal({ visible, classId, criteria, onSave, onCanc
           <View className="absolute bottom-0 left-0 right-0 p-4 bg-[#111c22]/95 backdrop-blur border-t border-[#325567]/50">
             <TouchableOpacity
               onPress={handleSave}
-              className="w-full bg-[#13a4ec] h-14 rounded-lg items-center justify-center flex-row gap-2 active:bg-[#0b8acb] shadow-lg shadow-[#13a4ec]/25"
+              className="w-full bg-[#13a4ec] h-14 rounded-lg items-center justify-center flex-row gap-2 active:bg-[#0b8acb]"
             >
               <Ionicons name="save-outline" size={20} color="#ffffff" />
               <Text className="text-base font-bold text-white">Save Changes</Text>

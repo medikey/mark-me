@@ -90,3 +90,40 @@ export const getGroupItemCounts = (
 
   return { classCount, subGroupCount }
 }
+
+/**
+ * Recursively search for classes and groups matching a query
+ */
+export const searchClassesAndGroups = (
+  query: string,
+  classGroups: ClassGroup[],
+  classes: Class[],
+): { classes: Class[]; groups: ClassGroup[] } => {
+  const lowerQuery = query.toLowerCase()
+  const matchedClasses: Class[] = []
+  const matchedGroups: ClassGroup[] = []
+
+  // Search through all classes
+  classes.forEach((cls) => {
+    if (cls.name.toLowerCase().includes(lowerQuery) || cls.subject.toLowerCase().includes(lowerQuery)) {
+      matchedClasses.push(cls)
+    }
+  })
+
+  // Search through all groups recursively
+  const searchGroups = (groups: ClassGroup[]) => {
+    groups.forEach((group) => {
+      if (group.name.toLowerCase().includes(lowerQuery)) {
+        matchedGroups.push(group)
+      }
+      // Recursively search subgroups
+      const subGroups = groups.filter((g) => group.subGroupIds.includes(g.id))
+      if (subGroups.length > 0) {
+        searchGroups(subGroups)
+      }
+    })
+  }
+
+  searchGroups(classGroups)
+  return { classes: matchedClasses, groups: matchedGroups }
+}

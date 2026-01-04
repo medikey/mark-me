@@ -101,7 +101,10 @@ export interface AppContextType {
   deleteClassGroup: (groupId: string) => void
   addItemsToGroup: (groupId: string, classIds: string[], subGroupIds: string[]) => void
   removeItemFromGroup: (groupId: string, itemId: string, itemType: "class" | "group") => void
-  getGroupChildren: (groupId: string) => { classes: Class[]; subGroups: ClassGroup[] }
+  getGroupChildren: (groupId: string) => {
+    filter(arg0: (item: any) => boolean): Class[]
+    classes: Class[]; subGroups: ClassGroup[] 
+}
   getRootItems: () => { classes: Class[]; groups: ClassGroup[] } // Get items not in any group
 
   getAllGroupAncestors: (groupId: string) => ClassGroup[] // Returns ClassGroup[] instead of string[]
