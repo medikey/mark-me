@@ -80,7 +80,7 @@ export default function OnboardingCarouselScreen() {
     <View className="flex-1 bg-[#101c22]">
       {/* Background Decorative Glows */}
       <View className="absolute top-[-20%] left-[-20%] w-[70%] h-[50%] rounded-full bg-[#13a4ec]/20 blur-[100px]" />
-      <View className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[40%] rounded-full bg-[#13a4ec]/10 blur-[80px]" />
+      <View className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[40%] rounded-full bg-[#13a4ec]/8 blur-[80px]" />
 
       {/* Top Bar with Skip Button */}
       <View className="items-end p-4 pt-12 z-10">
@@ -90,7 +90,7 @@ export default function OnboardingCarouselScreen() {
       </View>
 
       {/* Main Content Area - Single Page (No Scroll for MVP) */}
-      <View className="flex-1 items-center justify-center px-6 gap-8">
+      <View className="flex-1 items-center justify-center  gap-8 ">
         {/* Current Screen Content */}
         {onboardingData[currentIndex].illustrationComponent()}
 
@@ -121,7 +121,7 @@ export default function OnboardingCarouselScreen() {
 
         {/* Next/Get Started Button */}
         <TouchableOpacity
-          className="w-full flex-row items-center justify-between bg-[#13a4ec] h-14 rounded-2xl px-6 shadow-lg"
+          className="w-full flex-row items-center justify-between bg-[#13a4ec] h-14 rounded-full px-6 shadow-lg"
           activeOpacity={0.8}
           onPress={handleNext}
         >
@@ -225,7 +225,7 @@ function GradingIllustration() {
         </View>
 
         {/* Decorative Glow */}
-        <View className="absolute -top-10 -left-10 w-32 h-32 bg-[#13a4ec]/20 blur-3xl rounded-full" />
+        <View className="absolute -top-10 -left-10 w-32 h-32 bg-[#13a4ec]/20 blur-3xl rounded-full will-change-variable" />
       </View>
     </View>
   )

@@ -3,90 +3,165 @@ import { database } from "./appwrite"
 import type { Class } from "@/interfaces/interface"
 
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID!
-const CLASSES_COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_CLASSES_COLLECTION_ID!
+const CLASSES_COLLECTION_ID =
+  process.env.EXPO_PUBLIC_APPWRITE_CLASSES_COLLECTION_ID!
+
+/**
+ * IMPORTANT SCHEMA NOTES (Appwrite Console):
+ * ----------------------------------------
+ * students           → string (JSON array)
+ * gradingCriteria    → string (JSON array)
+ * assignments        → string (JSON array)
+ * parentGroupId      → string | null
+ */
 
 export const classesService = {
+  /* ---------------- CREATE ---------------- */
   async createClass(classData: Omit<Class, "id">): Promise<Class> {
     try {
-      const response = await database.createDocument(DATABASE_ID, CLASSES_COLLECTION_ID, ID.unique(), {
-        ...classData,
-        students: JSON.stringify(classData.students || []),
-        gradingCriteria: JSON.stringify(classData.gradingCriteria || []),
-        assignments: JSON.stringify(classData.assignments || []),
-      })
-      return this.mapDocumentToClass(response)
+      const response = await database.createDocument(
+        DATABASE_ID,
+        CLASSES_COLLECTION_ID,
+        ID.unique(),
+        {
+          name: classData.name,
+          subject: classData.subject,
+          time: classData.time,
+          room: classData.room,
+          studentCount: classData.students?.length ?? 0,
+          image: classData.image,
+          semester: classData.semester,
+          parentGroupId: classData.parentGroupId ?? null,
+
+          // Store arrays as JSON strings
+          students: JSON.stringify(classData.students ?? []),
+          gradingCriteria: JSON.stringify(classData.gradingCriteria ?? []),
+          assignments: JSON.stringify(classData.assignments ?? []),
+        }
+      )
+
+      return mapDocumentToClass(response)
     } catch (error) {
-      throw new Error(`Failed to create class: ${error}`)
+      console.error("Create class failed:", error)
+      throw new Error("Failed to create class")
     }
   },
 
+  /* ---------------- READ ---------------- */
   async getClasses(): Promise<Class[]> {
     try {
-      const response = await database.listDocuments(DATABASE_ID, CLASSES_COLLECTION_ID)
-      return response.documents.map((doc) => this.mapDocumentToClass(doc))
+      const response = await database.listDocuments(
+        DATABASE_ID,
+        CLASSES_COLLECTION_ID
+      )
+
+      return response.documents.map(mapDocumentToClass)
     } catch (error) {
-      throw new Error(`Failed to fetch classes: ${error}`)
+      console.error("Fetch classes failed:", error)
+      throw new Error("Failed to fetch classes")
     }
   },
 
   async getClassById(classId: string): Promise<Class | null> {
     try {
-      const response = await database.getDocument(DATABASE_ID, CLASSES_COLLECTION_ID, classId)
-      return this.mapDocumentToClass(response)
+      const response = await database.getDocument(
+        DATABASE_ID,
+        CLASSES_COLLECTION_ID,
+        classId
+      )
+      return mapDocumentToClass(response)
     } catch (error) {
-      console.error(`Failed to fetch class: ${error}`)
+      console.warn("Class not found:", classId)
       return null
-    }
-  },
-
-  async updateClass(classId: string, updates: Partial<Class>): Promise<Class> {
-    try {
-      const data: any = { ...updates }
-      if (updates.students) data.students = JSON.stringify(updates.students)
-      if (updates.gradingCriteria) data.gradingCriteria = JSON.stringify(updates.gradingCriteria)
-      if (updates.assignments) data.assignments = JSON.stringify(updates.assignments)
-
-      const response = await database.updateDocument(DATABASE_ID, CLASSES_COLLECTION_ID, classId, data)
-      return this.mapDocumentToClass(response)
-    } catch (error) {
-      throw new Error(`Failed to update class: ${error}`)
-    }
-  },
-
-  async deleteClass(classId: string): Promise<void> {
-    try {
-      await database.deleteDocument(DATABASE_ID, CLASSES_COLLECTION_ID, classId)
-    } catch (error) {
-      throw new Error(`Failed to delete class: ${error}`)
     }
   },
 
   async getClassesByTeacher(teacherId: string): Promise<Class[]> {
     try {
-      const response = await database.listDocuments(DATABASE_ID, CLASSES_COLLECTION_ID, [
-        Query.equal("teacherId", teacherId),
-      ])
-      return response.documents.map((doc) => this.mapDocumentToClass(doc))
+      const response = await database.listDocuments(
+        DATABASE_ID,
+        CLASSES_COLLECTION_ID,
+        [Query.equal("parentGroupId", teacherId)]
+      )
+
+      return response.documents.map(mapDocumentToClass)
     } catch (error) {
-      throw new Error(`Failed to fetch teacher's classes: ${error}`)
+      console.error("Fetch teacher classes failed:", error)
+      throw new Error("Failed to fetch teacher classes")
     }
   },
 
-  mapDocumentToClass(doc: any): Class {
-    return {
-      id: doc.$id,
-      name: doc.name,
-      subject: doc.subject,
-      section: doc.section,
-      time: doc.time,
-      room: doc.room,
-      studentCount: doc.studentCount,
-      image: doc.image,
-      semester: doc.semester,
-      students: doc.students ? JSON.parse(doc.students) : [],
-      gradingCriteria: doc.gradingCriteria ? JSON.parse(doc.gradingCriteria) : [],
-      assignments: doc.assignments ? JSON.parse(doc.assignments) : [],
-      parentGroupId: doc.parentGroupId,
+  /* ---------------- UPDATE ---------------- */
+  async updateClass(classId: string, updates: Partial<Class>): Promise<Class> {
+    try {
+      const payload: any = {}
+
+      if (updates.name !== undefined) payload.name = updates.name
+      if (updates.subject !== undefined) payload.subject = updates.subject
+      if (updates.time !== undefined) payload.time = updates.time
+      if (updates.room !== undefined) payload.room = updates.room
+      if (updates.studentCount !== undefined)
+        payload.studentCount = updates.studentCount
+      if (updates.image !== undefined) payload.image = updates.image
+      if (updates.semester !== undefined) payload.semester = updates.semester
+      if (updates.parentGroupId !== undefined)
+        payload.parentGroupId = updates.parentGroupId
+
+      // Convert arrays to strings before sending to Appwrite
+      if (updates.students) payload.students = JSON.stringify(updates.students)
+      if (updates.gradingCriteria)
+        payload.gradingCriteria = JSON.stringify(updates.gradingCriteria)
+      if (updates.assignments)
+        payload.assignments = JSON.stringify(updates.assignments)
+
+      const response = await database.updateDocument(
+        DATABASE_ID,
+        CLASSES_COLLECTION_ID,
+        classId,
+        payload
+      )
+
+      return mapDocumentToClass(response)
+    } catch (error) {
+      console.error("Update class failed:", error)
+      throw new Error("Failed to update class")
     }
   },
+
+  /* ---------------- DELETE ---------------- */
+  async deleteClass(classId: string): Promise<void> {
+    try {
+      await database.deleteDocument(DATABASE_ID, CLASSES_COLLECTION_ID, classId)
+    } catch (error) {
+      console.error("Delete class failed:", error)
+      throw new Error("Failed to delete class")
+    }
+  },
+}
+
+/* ---------------- MAPPERS ---------------- */
+function mapDocumentToClass(doc: any): Class {
+  return {
+    id: doc.$id,
+    name: doc.name,
+    subject: doc.subject,
+    time: doc.time,
+    room: doc.room,
+    studentCount: doc.studentCount,
+    image: doc.image,
+    semester: doc.semester,
+    parentGroupId: doc.parentGroupId ?? null,
+
+    students: safeParse(doc.students),
+    gradingCriteria: safeParse(doc.gradingCriteria),
+    assignments: safeParse(doc.assignments),
+  }
+}
+
+function safeParse(value: any) {
+  try {
+    return value ? JSON.parse(value) : []
+  } catch {
+    return []
+  }
 }

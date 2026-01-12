@@ -1,5 +1,5 @@
 "use client"
-import { MarkMeFullLogo, MarkMeLogo } from "@/images/images"
+import { MarkMeFullLogo, GettingStarted } from "@/images/images"
 import { useRouter } from "expo-router"
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 
@@ -36,12 +36,12 @@ export default function GetStartedScreen() {
         {/* Hero Illustration Section */}
         <View className="relative w-full max-w-70 mb-10">
           {/* Decorative Glow Effect */}
-          <View className="absolute inset-0 scale-110 rounded-full bg-[#13a4ec]/20 blur-3xl" />
+          <View className="absolute inset-0 scale-1.1 rounded-full bg-[#13a4ec]/20 blur-3xl" />
 
           {/* Main Hero Image */}
           <View className="relative w-full aspect-4/5 rounded-3xl overflow-hidden bg-[#1d2931] shadow-2xl">
             <Image
-              source={{ uri: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80" }}
+              source={GettingStarted}
               className="w-full h-full"
               resizeMode="cover"
             />
@@ -50,8 +50,8 @@ export default function GetStartedScreen() {
           </View>
 
           {/* Floating Badge Element - Bottom Right */}
-          <View className="absolute -bottom-6 right-8 w-24 h-24 bg-white rounded-4xl items-center justify-center shadow-lg border-4 border-[#101c22] overflow-hidden">
-            <Image source={MarkMeFullLogo} className="w-16 h-16 mb-4 ml-1.5" resizeMode="contain" />
+          <View className="absolute -bottom-6 right-8 w-24 h-24 bg-white rounded-4xl items-center justify-center shadow-lg border-4 border-[#101c22] overflow-hidden will-change-variable">
+            <Image source={MarkMeFullLogo} className="w-16 h-16 mb-2" resizeMode="contain" />
           </View>
         </View>
 
@@ -71,7 +71,7 @@ export default function GetStartedScreen() {
         <View className="w-full max-w-md mx-auto gap-4">
           {/* Primary Button: Create Account */}
           <TouchableOpacity
-            className="w-full h-14 bg-[#13a4ec] rounded-xl items-center justify-center shadow-lg"
+            className="w-full h-14 bg-[#13a4ec]/70 rounded-full items-center justify-center shadow-lg"
             activeOpacity={0.8}
             onPress={() => router.push("/(onboarding)/onboarding-carousel")}
           >
@@ -80,7 +80,7 @@ export default function GetStartedScreen() {
 
           {/* Secondary Button: Log In */}
           <TouchableOpacity
-            className="w-full h-14 bg-transparent rounded-xl items-center justify-center border border-[#325567]"
+            className="w-full h-14 bg-transparent rounded-full items-center justify-center border border-[#325567]"
             activeOpacity={0.7}
             onPress={() => router.push("/(auth)/login")}
           >

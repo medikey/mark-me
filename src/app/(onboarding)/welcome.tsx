@@ -2,7 +2,7 @@
 import { useRouter } from "expo-router"
 import { ImageBackground, Text, TouchableOpacity, View, Image } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
-import { MarkMeFullLogo, MarkMeLogo } from "@/images/images"
+import { MarkMeFullLogo, Welcome } from "@/images/images"
 
 /**
  * Welcome Screen - First screen users see when opening the app
@@ -27,8 +27,8 @@ export default function WelcomeScreen() {
         <View className="relative w-full h-[55%]">
           {/* Background Image */}
           <ImageBackground
-            source={{ uri: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80" }}
-            className="absolute inset-0"
+            source={Welcome}
+            className="absolute inset-0 max-w-md w-full h-full"
             resizeMode="cover"
           >
             {/* Gradient Overlay for smooth transition */}
@@ -40,9 +40,9 @@ export default function WelcomeScreen() {
           </ImageBackground>
 
           {/* Logo Container - Positioned at bottom of hero */}
-          <View className="absolute bottom-6 left-0 right-0 items-center">
-            <View className="w-24 h-24 bg-white rounded-3xl items-center justify-center shadow-xl overflow-hidden">
-              <Image source={MarkMeFullLogo} className="w-20 h-20 mb-4 ml-1.5" resizeMode="contain" />
+          <View className="absolute -bottom-10 right-0 left-60 items-center">
+            <View className="w-24 h-24 bg-white rounded-3xl items-center justify-center shadow-xl border-4 border-[#101c22] overflow-hidden will-change-variable">
+              <Image source={MarkMeFullLogo} className="w-20 h-20 mb-2" resizeMode="contain" />
             </View>
           </View>
         </View>
@@ -51,7 +51,7 @@ export default function WelcomeScreen() {
         <View className="flex-1 px-6 pb-8">
           {/* Headline & Description */}
           <View className="items-center text-center mt-10 mb-auto">
-            <Text className="text-3xl font-bold tracking-tight text-white text-center mb-3">Welcome to MarkMe</Text>
+            <Text className="text-3xl font-bold tracking-tight text-white text-center mb-3 mt-5">Welcome to MarkMe</Text>
             <Text className="text-[#92b7c9] text-base text-center leading-relaxed max-w-[320px]">
               Streamline your classroom. Track attendance, grade assignments, and generate reports in seconds.
             </Text>
@@ -61,7 +61,7 @@ export default function WelcomeScreen() {
           <View className="gap-3 w-full mt-8">
             {/* Primary Button: Get Started */}
             <TouchableOpacity
-              className="w-full h-14 bg-[#13a4ec] rounded-xl items-center justify-center shadow-lg"
+              className="w-full h-14 bg-[#13a4ec] rounded-full items-center justify-center shadow-lg"
               activeOpacity={0.8}
               onPress={() => router.push("/(onboarding)/get-started")}
             >

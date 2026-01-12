@@ -1,83 +1,123 @@
 import type { ReactNode } from "react"
 import type { Ionicons } from "@expo/vector-icons"
-import type { AttendanceRecord } from "./AttendanceRecord" // Added import for AttendanceRecord
 
-/**
- * Core domain interfaces
- * These define the primary data structures used throughout the application
- */
+/* ---------------- APPWRITE DOCUMENT REFERENCE ---------------- */
+// Every entity synced with Appwrite now has an optional appwriteId
+export interface AppwriteDoc {
+  appwriteId?: string
+}
 
-export interface AttendanceRecord {
+/* ---------------- ATTENDANCE ---------------- */
+export interface AttendanceRecord extends AppwriteDoc {
   id: string
   classId: string
-  date: string // ISO date string (YYYY-MM-DD)
+  date: string // ISO date (YYYY-MM-DD)
   studentRecords: Array<{
-    id: string // NEW: Added id field for the attendance record entry
+    id: string
     studentId: string
     name: string
     status: "present" | "absent"
   }>
-  takenBy?: string // Educator who recorded attendance
-  notes?: string // Optional notes about the session
-  createdAt: string // ISO timestamp when record was created
-  updatedAt: string // ISO timestamp when record was last updated
+  takenBy?: string
+  notes?: string
+  createdAt: string
+  updatedAt: string
 }
-export interface Student {
+
+/* ---------------- STUDENTS ---------------- */
+export interface Student extends AppwriteDoc {
   id: string
   name: string
   avatar?: string
   status: "present" | "absent"
-  grades?: {
-    [criteria: string]: number
-  }
+  grades?: Record<string, number>
+  parentGroupId?: string | null
 }
 
-export interface Class {
-  subject: string // Moved to top as seen in pasted file
+/* ---------------- CLASSES ---------------- */
+export interface Class extends AppwriteDoc {
   id: string
+  subject: string
   name: string
-  section: string
   time: string
   room: string
   studentCount: number
   image: string
   students: Student[]
   semester: string
-  gradingCriteriaNew?: GradingCriterion[] // NEW - Added from pasted file for backward compatibility
-  gradingCriteria?: string[] // NEW - Added legacy string array format from pasted file
+  gradingCriteriaNew?: GradingCriterion[]
+  gradingCriteria?: string[] // legacy format
   assignments?: Assignment[]
   gradingSystem?: "points" | "letter" | "passfail"
-  parentGroupId?: string // Optional - if set, this class belongs to a group
+  parentGroupId?: string | null
 }
 
-/**
- * ClassGroup interface
- * Allows educators to organize multiple classes or sub-groups together
- * Supports nested hierarchy for complex organizational structures
- */
-export interface ClassGroup {
+/* ---------------- CLASS GROUPS ---------------- */
+export interface ClassGroup extends AppwriteDoc {
   id: string
   name: string
   description?: string
-  classIds: string[] // IDs of classes directly in this group
-  subGroupIds: string[] // IDs of nested groups within this group
-  parentGroupId?: string // Optional - if set, this group is nested within another group
+  classIds: string[]
+  subGroupIds: string[]
+  parentGroupId?: string
   createdAt: string
   updatedAt: string
-  icon?: string // Material icon name for visual identification
-  color?: string // Hex color for group badge/highlight
+  icon?: string
+  color?: string
 }
 
-/**
- * Context interfaces
- * These define the shape of the global app state and its methods
- */
+/* ---------------- USER PROFILE ---------------- */
+export interface UserProfile {
+  name: string
+  title: string
+  email: string
+  phone?: string
+  avatar?: string
+}
+
+/* ---------------- STUDENT GRADES ---------------- */
+export interface GradingCriterion extends AppwriteDoc {
+  id: string
+  name: string
+  weight: number
+  maxScore: number
+  description?: string
+}
+
+export interface Assignment extends AppwriteDoc {
+  id: string
+  name: string
+  classId: string
+  date: string
+  criteria: GradingCriterion[]
+  gradingSystem: "points" | "letter" | "passfail"
+}
+
+export interface StudentGrade extends AppwriteDoc {
+  classId: string
+  studentId: string
+  assignmentId: string
+  score: number
+  maxScore: number
+  scores: Record<string, number>
+  overallGrade?: number
+  letterGrade?: string
+  comment?: string
+  gradedAt: string
+}
+
+export interface GradeRecord {
+  classId: string
+  studentId: string
+  date: string
+  grades: Record<string, number>
+}
+
+/* ---------------- APP CONTEXT ---------------- */
 export interface AppContextType {
-  // Authentication state
   isAuthenticated: boolean
   setIsAuthenticated: (value: boolean) => void
 
-  // Core data state
   classes: Class[]
   setClasses: (classes: Class[] | ((prev: Class[]) => Class[])) => void
   classGroups: ClassGroup[]
@@ -87,40 +127,33 @@ export interface AppContextType {
   attendanceRecords: AttendanceRecord[]
   isLoading: boolean
 
-  // User profile management
   userProfile: UserProfile
   updateUserProfile: (profile: Partial<UserProfile>) => void
 
-  // Class management methods
   deleteClass: (classId: string) => void
   updateClass: (classId: string, updates: Partial<Class>) => void
 
-  // Class Group management methods
   createClassGroup: (group: Omit<ClassGroup, "id" | "createdAt" | "updatedAt">) => ClassGroup
   updateClassGroup: (groupId: string, updates: Partial<ClassGroup>) => void
   deleteClassGroup: (groupId: string) => void
   addItemsToGroup: (groupId: string, classIds: string[], subGroupIds: string[]) => void
   removeItemFromGroup: (groupId: string, itemId: string, itemType: "class" | "group") => void
   getGroupChildren: (groupId: string) => { classes: Class[]; subGroups: ClassGroup[] }
-  getRootItems: () => { classes: Class[]; groups: ClassGroup[] } // Get items not in any group
+  getRootItems: () => { classes: Class[]; groups: ClassGroup[] }
+  getAllGroupAncestors: (groupId: string) => ClassGroup[]
+  getAllGroupDescendants: (groupId: string) => ClassGroup[]
+  getGroupItemCounts: (groupId: string) => { classCount: number; subGroupCount: number }
 
-  getAllGroupAncestors: (groupId: string) => ClassGroup[] // Returns ClassGroup[] instead of string[]
-  getAllGroupDescendants: (groupId: string) => ClassGroup[] // Returns ClassGroup[] instead of string[]
-  getGroupItemCounts: (groupId: string) => { classCount: number; subGroupCount: number } // NEW - Added getGroupItemCounts to interface definition
-
-  // Student management methods
   updateStudentStatus: (classId: string, studentId: string, status: "present" | "absent") => void
   addStudent: (classId: string, student: Student) => void
   updateStudent: (classId: string, studentId: string, updates: Partial<Student>) => void
   deleteStudent: (classId: string, studentId: string) => void
 
-  // Grading methods
   saveGrade: (classId: string, assignmentId: string, grade: StudentGrade) => void
   getStudentGrades: (classId: string, studentId: string) => StudentGrade[]
   addAssignment: (classId: string, assignment: Assignment) => void
   updateGradingCriteria: (classId: string, criteria: GradingCriterion[]) => void
 
-  // Attendance methods
   saveAttendanceRecord: (classId: string, date: string) => void
   getAttendanceHistory: (classId: string) => AttendanceRecord[]
   getStudentAttendanceHistory: (studentId: string, classId: string) => AttendanceRecord[]
@@ -130,22 +163,10 @@ export interface AppContextType {
     studentStats: { studentId: string; presentCount: number; absentCount: number; rate: number }[]
   }
 
-  // System methods
   logout: () => Promise<void>
 }
 
-export interface UserProfile {
-  name: string
-  title: string
-  email: string
-  phone?: string
-  avatar?: string
-}
-
-/**
- * Component prop interfaces
- * These define the props accepted by reusable UI components
- */
+/* ---------------- UI COMPONENTS ---------------- */
 export interface ButtonProps {
   title: string
   onPress: () => void
@@ -166,7 +187,7 @@ export interface HeaderProps {
 export interface CardProps {
   children: ReactNode
   className?: string
-  onPress?: () => void // Makes Card touchable for navigation
+  onPress?: () => void
 }
 
 export interface AvatarProps {
@@ -201,10 +222,7 @@ export interface StatsCardProps {
   label: string
 }
 
-/**
- * Toast and Modal interfaces
- * Used for user feedback and confirmation dialogs
- */
+/* ---------------- TOASTS & MODALS ---------------- */
 export type ToastType = "success" | "error" | "info" | "warning"
 
 export interface ToastProps {
@@ -240,55 +258,7 @@ export interface EditClassModalProps {
   onCancel: () => void
 }
 
-/**
- * Grading system interfaces
- * Comprehensive grading system with criteria, assignments, and student grades
- */
-export interface GradingCriterion {
-  id: string
-  name: string
-  weight: number // Percentage weight of this criterion
-  maxScore: number // Maximum achievable score
-  description?: string
-}
-
-export interface Assignment {
-  id: string
-  name: string
-  classId: string
-  date: string
-  criteria: GradingCriterion[]
-  gradingSystem: "points" | "letter" | "passfail"
-}
-
-export interface StudentGrade {
-  classId: string
-  score: number
-  maxScore: number
-  studentId: string
-  assignmentId: string
-  scores: {
-    [criterionId: string]: number
-  }
-  overallGrade?: number
-  letterGrade?: string
-  comment?: string
-  gradedAt: string
-}
-
-export interface GradeRecord {
-  classId: string
-  studentId: string
-  date: string
-  grades: {
-    [criteria: string]: number
-  }
-}
-
-/**
- * Grading component interfaces
- * Props for grading-related modal components
- */
+/* ---------------- GRADING MODALS ---------------- */
 export interface ManageCriteriaModalProps {
   visible: boolean
   classId: string
