@@ -1,4 +1,6 @@
 import { Client, Databases, ID, Query } from "react-native-appwrite"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { dedupRequest } from "../src/utils/requestDedup"
 
 const client = new Client()
   .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1")
@@ -9,6 +11,13 @@ const databases = new Databases(client)
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID || ""
 const GRADES_COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_GRADES_COLLECTION_ID || ""
 const CRITERIA_COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_CRITERIA_COLLECTION_ID || ""
+
+// Cache configuration
+const CACHE_DURATION = 2 * 60 * 1000 // 2 minutes (frequently updated)
+const getStudentGradesCacheKey = (studentId: string, classId: string) =>
+  `@markme:grades_${studentId}_${classId}`
+const getClassCriteriaCacheKey = (classId: string) => `@markme:criteria_${classId}`
+const getCacheTimestampKey = (key: string) => `${key}_timestamp`
 
 interface Grade {
   studentId: string
@@ -45,6 +54,9 @@ export const gradesService = {
         createdAt: new Date().toISOString(),
       })
 
+      // Invalidate related caches
+      await this.invalidateStudentGradesCache(grade.studentId, grade.classId)
+
       console.log("Grade saved successfully")
     } catch (error: any) {
       console.error("Save grade error:", error)
@@ -52,27 +64,56 @@ export const gradesService = {
     }
   },
 
-  // Get grades for a student in a class
+  // Get grades for a student in a class (cached and deduped)
   async getStudentGrades(studentId: string, classId: string): Promise<Grade[]> {
-    try {
-      const documents = await databases.listDocuments(DATABASE_ID, GRADES_COLLECTION_ID, [
-        Query.equal("studentId", studentId),
-        Query.equal("classId", classId),
-      ])
+    return dedupRequest(`grades:${studentId}:${classId}`, async () => {
+      try {
+        // Check cache first
+        const cacheKey = getStudentGradesCacheKey(studentId, classId)
+        const cachedGrades = await AsyncStorage.getItem(cacheKey)
+        const cachedTimestamp = await AsyncStorage.getItem(getCacheTimestampKey(cacheKey))
 
-      return documents.documents.map((doc: any) => ({
-        studentId: doc.studentId,
-        classId: doc.classId,
-        assignmentId: doc.assignmentId,
-        score: doc.score,
-        maxScore: doc.maxScore,
-        criteriaBreakdown: doc.criteriaBreakdown ? JSON.parse(doc.criteriaBreakdown) : {},
-        gradedDate: doc.gradedDate,
-      }))
-    } catch (error: any) {
-      console.error("Get grades error:", error)
-      return []
-    }
+        if (cachedGrades && cachedTimestamp) {
+          const age = Date.now() - parseInt(cachedTimestamp)
+          if (age < CACHE_DURATION) {
+            console.log(`Using cached grades for student ${studentId}`)
+            return JSON.parse(cachedGrades)
+          }
+        }
+
+        // Fetch from server if cache is missing or stale
+        const documents = await databases.listDocuments(DATABASE_ID, GRADES_COLLECTION_ID, [
+          Query.equal("studentId", studentId),
+          Query.equal("classId", classId),
+        ])
+
+        const grades = documents.documents.map((doc: any) => ({
+          studentId: doc.studentId,
+          classId: doc.classId,
+          assignmentId: doc.assignmentId,
+          score: doc.score,
+          maxScore: doc.maxScore,
+          criteriaBreakdown: doc.criteriaBreakdown ? JSON.parse(doc.criteriaBreakdown) : {},
+          gradedDate: doc.gradedDate,
+        }))
+
+        // Cache the results
+        await AsyncStorage.setItem(cacheKey, JSON.stringify(grades))
+        await AsyncStorage.setItem(getCacheTimestampKey(cacheKey), Date.now().toString())
+
+        return grades
+      } catch (error: any) {
+        console.error("Get grades error:", error)
+        // Return cached data on error if available
+        const cacheKey = getStudentGradesCacheKey(studentId, classId)
+        const cachedGrades = await AsyncStorage.getItem(cacheKey)
+        if (cachedGrades) {
+          console.warn("Using stale cache due to fetch error")
+          return JSON.parse(cachedGrades)
+        }
+        return []
+      }
+    })
   },
 
   // Create grading criteria for a class
@@ -89,6 +130,9 @@ export const gradesService = {
         createdAt: new Date().toISOString(),
       })
 
+      // Invalidate cache after creating criteria
+      await this.invalidateCriteriaCache(classId)
+
       console.log("Criteria created successfully")
     } catch (error: any) {
       console.error("Create criteria error:", error)
@@ -96,24 +140,53 @@ export const gradesService = {
     }
   },
 
-  // Get criteria for a class
+  // Get criteria for a class (cached and deduped)
   async getClassCriteria(classId: string): Promise<GradingCriteria[]> {
-    try {
-      const documents = await databases.listDocuments(DATABASE_ID, CRITERIA_COLLECTION_ID, [
-        Query.equal("classId", classId),
-      ])
+    return dedupRequest(`criteria:${classId}`, async () => {
+      try {
+        // Check cache first
+        const cacheKey = getClassCriteriaCacheKey(classId)
+        const cachedCriteria = await AsyncStorage.getItem(cacheKey)
+        const cachedTimestamp = await AsyncStorage.getItem(getCacheTimestampKey(cacheKey))
 
-      return documents.documents.map((doc: any) => ({
-        classId: doc.classId,
-        name: doc.name,
-        description: doc.description,
-        maxPoints: doc.maxPoints,
-        weight: doc.weight,
-      }))
-    } catch (error: any) {
-      console.error("Get criteria error:", error)
-      return []
-    }
+        if (cachedCriteria && cachedTimestamp) {
+          const age = Date.now() - parseInt(cachedTimestamp)
+          if (age < CACHE_DURATION) {
+            console.log(`Using cached criteria for class ${classId}`)
+            return JSON.parse(cachedCriteria)
+          }
+        }
+
+        // Fetch from server if cache is missing or stale
+        const documents = await databases.listDocuments(DATABASE_ID, CRITERIA_COLLECTION_ID, [
+          Query.equal("classId", classId),
+        ])
+
+        const criteria = documents.documents.map((doc: any) => ({
+          classId: doc.classId,
+          name: doc.name,
+          description: doc.description,
+          maxPoints: doc.maxPoints,
+          weight: doc.weight,
+        }))
+
+        // Cache the results
+        await AsyncStorage.setItem(cacheKey, JSON.stringify(criteria))
+        await AsyncStorage.setItem(getCacheTimestampKey(cacheKey), Date.now().toString())
+
+        return criteria
+      } catch (error: any) {
+        console.error("Get criteria error:", error)
+        // Return cached data on error if available
+        const cacheKey = getClassCriteriaCacheKey(classId)
+        const cachedCriteria = await AsyncStorage.getItem(cacheKey)
+        if (cachedCriteria) {
+          console.warn("Using stale cache due to fetch error")
+          return JSON.parse(cachedCriteria)
+        }
+        return []
+      }
+    })
   },
 
   // Calculate average grade for a student in a class (0-100)
@@ -134,5 +207,27 @@ export const gradesService = {
       console.error("Calculate average error:", error)
       return 0
     }
+  },
+
+  // Cache invalidation methods
+  async invalidateStudentGradesCache(studentId: string, classId: string): Promise<void> {
+    const cacheKey = getStudentGradesCacheKey(studentId, classId)
+    await AsyncStorage.removeItem(cacheKey)
+    await AsyncStorage.removeItem(getCacheTimestampKey(cacheKey))
+    console.log(`Invalidated grades cache for student ${studentId}`)
+  },
+
+  async invalidateCriteriaCache(classId: string): Promise<void> {
+    const cacheKey = getClassCriteriaCacheKey(classId)
+    await AsyncStorage.removeItem(cacheKey)
+    await AsyncStorage.removeItem(getCacheTimestampKey(cacheKey))
+    console.log(`Invalidated criteria cache for class ${classId}`)
+  },
+
+  async clearAllCache(): Promise<void> {
+    const allKeys = await AsyncStorage.getAllKeys()
+    const gradesCacheKeys = allKeys.filter((key) => key.startsWith("@markme:grades") || key.startsWith("@markme:criteria"))
+    await AsyncStorage.multiRemove(gradesCacheKeys)
+    console.log("Cleared all grades and criteria cache")
   },
 }
