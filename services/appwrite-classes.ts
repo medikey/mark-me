@@ -1,6 +1,7 @@
 import { ID, Query } from "react-native-appwrite"
 import { database } from "./appwrite"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { logAppwriteError, parseAppwriteError } from "../src/utils/appwriteErrorHandler"
 import type { Class } from "@/interfaces/interface"
 
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID!
@@ -51,8 +52,9 @@ export const classesService = {
 
       return mapDocumentToClass(response)
     } catch (error) {
-      console.error("Create class failed:", error)
-      throw new Error("Failed to create class")
+      logAppwriteError("Create class failed", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
@@ -85,14 +87,15 @@ export const classesService = {
 
       return classes
     } catch (error) {
-      console.error("Fetch classes failed:", error)
+      logAppwriteError("Fetch classes failed", error)
       // Return cached data on error if available
       const cachedClasses = await AsyncStorage.getItem(CACHE_KEY)
       if (cachedClasses) {
         console.warn("Using stale cache due to fetch error")
         return JSON.parse(cachedClasses)
       }
-      throw new Error("Failed to fetch classes")
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
@@ -105,7 +108,7 @@ export const classesService = {
       )
       return mapDocumentToClass(response)
     } catch (error) {
-      console.warn("Class not found:", classId)
+      logAppwriteError(`Class not found: ${classId}`, error)
       return null
     }
   },
@@ -120,8 +123,9 @@ export const classesService = {
 
       return response.documents.map(mapDocumentToClass)
     } catch (error) {
-      console.error("Fetch teacher classes failed:", error)
-      throw new Error("Failed to fetch teacher classes")
+      logAppwriteError("Fetch teacher classes failed", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
@@ -160,8 +164,9 @@ export const classesService = {
 
       return mapDocumentToClass(response)
     } catch (error) {
-      console.error("Update class failed:", error)
-      throw new Error("Failed to update class")
+      logAppwriteError("Update class failed", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
@@ -172,8 +177,9 @@ export const classesService = {
       // Invalidate cache on delete
       await this.invalidateCache()
     } catch (error) {
-      console.error("Delete class failed:", error)
-      throw new Error("Failed to delete class")
+      logAppwriteError("Delete class failed", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 

@@ -2,6 +2,7 @@ import { ID, Query } from "react-native-appwrite"
 import { database } from "./appwrite"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { dedupRequest } from "../src/utils/requestDedup"
+import { logAppwriteError, parseAppwriteError } from "../src/utils/appwriteErrorHandler"
 import type { Student } from "@/interfaces/interface"
 
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID!
@@ -24,7 +25,9 @@ export const studentsService = {
       await this.invalidateClassCache(classId)
       return this.mapDocumentToStudent(response as any)
     } catch (error) {
-      throw new Error(`Failed to add student: ${error}`)
+      logAppwriteError("Failed to add student", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
@@ -63,7 +66,9 @@ export const studentsService = {
           console.warn(`Using stale cache for class ${classId} due to fetch error`)
           return JSON.parse(cachedStudents)
         }
-        throw new Error(`Failed to fetch students: ${error}`)
+        logAppwriteError(`Failed to fetch students for class ${classId}`, error)
+        const parsed = parseAppwriteError(error)
+        throw new Error(parsed.message)
       }
     })
   },
@@ -82,7 +87,9 @@ export const studentsService = {
       
       return this.mapDocumentToStudent(response as any)
     } catch (error) {
-      throw new Error(`Failed to update student: ${error}`)
+      logAppwriteError("Failed to update student", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
@@ -95,7 +102,9 @@ export const studentsService = {
         await this.invalidateClassCache(classId)
       }
     } catch (error) {
-      throw new Error(`Failed to delete student: ${error}`)
+      logAppwriteError("Failed to delete student", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
