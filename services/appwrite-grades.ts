@@ -1,6 +1,7 @@
 import { Client, Databases, ID, Query } from "react-native-appwrite"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { dedupRequest } from "../src/utils/requestDedup"
+import { logAppwriteError, parseAppwriteError } from "../src/utils/appwriteErrorHandler"
 
 const client = new Client()
   .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT || "https://cloud.appwrite.io/v1")
@@ -59,8 +60,9 @@ export const gradesService = {
 
       console.log("Grade saved successfully")
     } catch (error: any) {
-      console.error("Save grade error:", error)
-      throw new Error(error.message || "Failed to save grade")
+      logAppwriteError("Save grade error", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
@@ -111,6 +113,7 @@ export const gradesService = {
           console.warn("Using stale cache due to fetch error")
           return JSON.parse(cachedGrades)
         }
+        logAppwriteError(`Failed to fetch grades for student ${studentId}`, error)
         return []
       }
     })
@@ -135,8 +138,9 @@ export const gradesService = {
 
       console.log("Criteria created successfully")
     } catch (error: any) {
-      console.error("Create criteria error:", error)
-      throw new Error(error.message || "Failed to create criteria")
+      logAppwriteError("Create criteria error", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
@@ -184,6 +188,7 @@ export const gradesService = {
           console.warn("Using stale cache due to fetch error")
           return JSON.parse(cachedCriteria)
         }
+        logAppwriteError(`Failed to fetch criteria for class ${classId}`, error)
         return []
       }
     })

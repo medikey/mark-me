@@ -1,6 +1,7 @@
 import { Client, Account, Databases, ID } from "react-native-appwrite"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { dedupRequest } from "../src/utils/requestDedup"
+import { parseAppwriteError, logAppwriteError } from "../src/utils/appwriteErrorHandler"
 
 // Initialize Appwrite client
 const client = new Client()
@@ -77,8 +78,9 @@ export const appwriteAuth = {
       console.log("Teacher signup successful:", user.$id)
       return { userId: user.$id, email: user.email }
     } catch (error: any) {
-      console.error("Signup error:", error)
-      throw new Error(error.message || "Signup failed")
+      logAppwriteError("Signup error", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
@@ -108,14 +110,15 @@ export const appwriteAuth = {
         await AsyncStorage.setItem(CACHE_KEYS.USER_PROFILE, JSON.stringify(profile))
         await AsyncStorage.setItem(CACHE_KEYS.USER_PROFILE_TIMESTAMP, Date.now().toString())
       } catch (err) {
-        console.warn("Failed to fetch profile during login:", err)
+        logAppwriteError("Failed to fetch profile during login", err)
       }
 
       console.log("Login successful:", session.userId)
       return { userId: session.userId, email: email, profile: profile || undefined }
     } catch (error: any) {
-      console.error("Login error:", error)
-      throw new Error(error.message || "Invalid email or password")
+      logAppwriteError("Login error", error)
+      const parsed = parseAppwriteError(error)
+      throw new Error(parsed.message)
     }
   },
 
