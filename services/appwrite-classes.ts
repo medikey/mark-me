@@ -1,10 +1,16 @@
 import { ID, Query } from "react-native-appwrite"
 import { database } from "./appwrite"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import type { Class } from "@/interfaces/interface"
 
 const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID!
 const CLASSES_COLLECTION_ID =
   process.env.EXPO_PUBLIC_APPWRITE_CLASSES_COLLECTION_ID!
+
+// Cache keys and duration
+const CACHE_KEY = "@markme:classes_cache"
+const CACHE_TIMESTAMP_KEY = "@markme:classes_cache_timestamp"
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
 /**
  * IMPORTANT SCHEMA NOTES (Appwrite Console):
@@ -40,6 +46,9 @@ export const classesService = {
         }
       )
 
+      // Invalidate cache after creating new class
+      await this.invalidateCache()
+
       return mapDocumentToClass(response)
     } catch (error) {
       console.error("Create class failed:", error)
@@ -50,14 +59,39 @@ export const classesService = {
   /* ---------------- READ ---------------- */
   async getClasses(): Promise<Class[]> {
     try {
+      // Check cache first
+      const cachedClasses = await AsyncStorage.getItem(CACHE_KEY)
+      const cachedTimestamp = await AsyncStorage.getItem(CACHE_TIMESTAMP_KEY)
+
+      if (cachedClasses && cachedTimestamp) {
+        const age = Date.now() - parseInt(cachedTimestamp)
+        if (age < CACHE_DURATION) {
+          console.log("Using cached classes")
+          return JSON.parse(cachedClasses)
+        }
+      }
+
+      // Fetch from server if cache is missing or stale
       const response = await database.listDocuments(
         DATABASE_ID,
         CLASSES_COLLECTION_ID
       )
 
-      return response.documents.map(mapDocumentToClass)
+      const classes = response.documents.map(mapDocumentToClass)
+
+      // Cache the results
+      await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(classes))
+      await AsyncStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString())
+
+      return classes
     } catch (error) {
       console.error("Fetch classes failed:", error)
+      // Return cached data on error if available
+      const cachedClasses = await AsyncStorage.getItem(CACHE_KEY)
+      if (cachedClasses) {
+        console.warn("Using stale cache due to fetch error")
+        return JSON.parse(cachedClasses)
+      }
       throw new Error("Failed to fetch classes")
     }
   },
@@ -121,6 +155,9 @@ export const classesService = {
         payload
       )
 
+      // Invalidate cache after updating class
+      await this.invalidateCache()
+
       return mapDocumentToClass(response)
     } catch (error) {
       console.error("Update class failed:", error)
@@ -132,10 +169,24 @@ export const classesService = {
   async deleteClass(classId: string): Promise<void> {
     try {
       await database.deleteDocument(DATABASE_ID, CLASSES_COLLECTION_ID, classId)
+      // Invalidate cache on delete
+      await this.invalidateCache()
     } catch (error) {
       console.error("Delete class failed:", error)
       throw new Error("Failed to delete class")
     }
+  },
+
+  /* ---------------- CACHE MANAGEMENT ---------------- */
+  async invalidateCache(): Promise<void> {
+    await AsyncStorage.removeItem(CACHE_KEY)
+    await AsyncStorage.removeItem(CACHE_TIMESTAMP_KEY)
+    console.log("Classes cache invalidated")
+  },
+
+  async clearCache(): Promise<void> {
+    await AsyncStorage.removeItem(CACHE_KEY)
+    await AsyncStorage.removeItem(CACHE_TIMESTAMP_KEY)
   },
 }
 

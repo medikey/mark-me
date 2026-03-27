@@ -37,8 +37,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuthStatus = async () => {
     try {
+      // Check if session is active
       const isActive = await appwriteAuth.isSessionActive()
       if (isActive) {
+        // Fetch user (now uses cache to prevent double API call)
         const currentUser = await appwriteAuth.getCurrentUser()
         if (currentUser) {
           setUser(currentUser)
@@ -68,9 +70,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true)
-      await appwriteAuth.login(email, password)
-
-      const currentUser = await appwriteAuth.getCurrentUser()
+      // Login now returns the profile to avoid double API call
+      const result = await appwriteAuth.login(email, password)
+      
+      // Use the profile from login response if available, otherwise fetch it
+      let currentUser = result.profile
+      if (!currentUser) {
+        currentUser = await appwriteAuth.getCurrentUser()
+      }
+      
       if (currentUser) {
         setUser(currentUser)
         setIsAuthenticated(true)
